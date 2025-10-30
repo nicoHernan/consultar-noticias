@@ -1,0 +1,39 @@
+package com.example.brevisimo_news.data.repository
+
+import com.example.brevisimo_news.data.local.CategoryDataSource
+import com.example.brevisimo_news.data.local.MediaDataSource
+import com.example.brevisimo_news.data.remote.NewsApiService
+import com.example.brevisimo_news.domain.model.ArticleDto
+import com.example.brevisimo_news.domain.model.MediaDto
+import javax.inject.Inject
+
+private const val  API_KEY = "e68d5a60540f413a94ff0dd10face2f3"
+class HomeRepositoryImpl @Inject constructor(
+    private val categoryDataSource: CategoryDataSource,
+    private val newsApiService: NewsApiService,
+    private val mediaDataSource: MediaDataSource
+): HomeRepository {
+    override suspend fun getMediaInUs(country: String): List<ArticleDto> {
+        return newsApiService.getMediaInUs(apiKey = API_KEY, country = country).articles
+            ?: emptyList()
+    }
+
+    override fun getListOfCategories(): List<String> {
+        return categoryDataSource.categories.map { sourceDto ->
+            sourceDto.name
+        }
+    }
+
+    override suspend fun getCategoryContent(category: String): List<MediaDto> {
+        return newsApiService.getHeadLinesByCategory(category = category, apiKey = API_KEY).sources
+            ?: emptyList()
+    }
+
+    override suspend fun getDomain(domains: String): List<ArticleDto> {
+        return newsApiService.getEverythingByDomain(domains = domains, apiKey = API_KEY).articles ?: emptyList()
+    }
+
+    override fun getLocalMediaSources(): List<MediaDto> {
+       return mediaDataSource.media
+    }
+}

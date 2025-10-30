@@ -80,13 +80,6 @@ fun HomeContent (
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            textAlign = TextAlign.Start,
-            text = stringResource(R.string.app_name)
-        )
 
         Spacer(modifier = Modifier.height(20.dp))
 

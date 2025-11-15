@@ -18,7 +18,7 @@ class HomeRepositoryImpl @Inject constructor(
             ?: emptyList()
     }
 
-    override fun getListOfCategories(): List<String> {
+    override fun getLocalCategories(): List<String> {
         return categoryDataSource.categories.map { sourceDto ->
             sourceDto.name
         }

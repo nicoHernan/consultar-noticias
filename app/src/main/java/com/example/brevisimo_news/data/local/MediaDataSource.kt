@@ -190,7 +190,7 @@ class MediaDataSource @Inject constructor() {
             id = "infobae",
             name = "Infobae",
             description = "Noticias de Argentina y del mundo en tiempo real. Información, videos y fotos sobre los hechos más relevantes y sus protagonistas. Léelo antes en infobae.",
-            url = "http://www.lagaceta.com.ar",
+            url = "http://www.infobae.com.ar",
             category = "general",
             language = "es",
             country = "ar"

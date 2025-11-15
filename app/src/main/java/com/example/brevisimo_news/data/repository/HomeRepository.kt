@@ -7,7 +7,7 @@ interface HomeRepository {
 
     suspend fun getMediaInUs(country: String): List<ArticleDto>
 
-    fun getListOfCategories(): List<String>
+    fun getLocalCategories(): List<String>
     suspend fun getCategoryContent(category: String): List<MediaDto>
     suspend fun getDomain(domains: String): List<ArticleDto>
 

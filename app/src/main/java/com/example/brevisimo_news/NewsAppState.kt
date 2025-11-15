@@ -42,10 +42,15 @@ class NewsAppState (
         }
     }
 
-
     fun openDrawer() {
         coroutineScope.launch {
             drawerState.open()
+        }
+    }
+
+    fun navigateToCategory(categoryName: String) {
+        navHostController.navigate(route = "$CATEGORY_SCREEN/$categoryName") {
+            launchSingleTop = true
         }
     }
 }

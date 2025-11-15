@@ -63,7 +63,8 @@ fun HomeScreen(
         homeUiState = homeUiState,
         onSearch = homeViewModel::onSearch,
         articleDto = homeUiState.newsInUs,
-        openDrawer = appState::openDrawer
+        openDrawer = appState::openDrawer,
+        onCategorySelected = appState::navigateToCategory
     )
 }
 
@@ -75,7 +76,8 @@ fun HomeContent (
     categories: List<String>,
     articleDto: List<ArticleDto>,
     homeUiState: HomeUiState,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
+    onCategorySelected: (String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -100,13 +102,10 @@ fun HomeContent (
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(categories) { category ->
-                Text(
-                    text = category,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 14.sp
+                CategoryItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    categoryName = category,
+                    onClick = onCategorySelected
                 )
             }
         }
@@ -158,7 +157,8 @@ fun HomePortraitLayout (
     articleDto: List<ArticleDto>,
     homeUiState: HomeUiState,
     onSearch: (String) -> Unit,
-    openDrawer: () -> Unit
+    openDrawer: () -> Unit,
+    onCategorySelected: (String) -> Unit
 ){
     Brevisimo_NewsTheme{
         Scaffold(
@@ -187,7 +187,8 @@ fun HomePortraitLayout (
                         categories = categories,
                         homeUiState = homeUiState,
                         onSearch = onSearch,
-                        articleDto = articleDto
+                        articleDto = articleDto,
+                        onCategorySelected = onCategorySelected
                     )
                 }
             },
@@ -240,7 +241,8 @@ fun PortraitPreview() {
             homeUiState = uiState,
             onSearch = {},
             articleDto = articleDto,
-            openDrawer = {}
+            openDrawer = {},
+            onCategorySelected = {}
         )
     }
 }

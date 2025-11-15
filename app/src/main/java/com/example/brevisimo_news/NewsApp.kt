@@ -15,13 +15,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.getString
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.brevisimo_news.common.DrawerComposable
 import com.example.brevisimo_news.data.local.MediaDataSource
 import com.example.brevisimo_news.screens.category.CategoryScreen
@@ -118,8 +121,22 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
     composable(DETAIL_SCREEN) {
         DetailScreen()
     }
-    composable(CATEGORY_SCREEN) {
-        CategoryScreen()
+    composable(
+        route = "$CATEGORY_SCREEN / ${CATEGORY_ARGUMENTS}",
+        arguments = listOf(
+            navArgument(CATEGORY_ARGUMENTS) { type = NavType.StringType }
+        )
+    ){backstackentry ->
+        val categoryName = backstackentry
+            .arguments?.getString(CATEGORY_ARGUMENTS) ?: "general"
+
+        CategoryScreen(
+            modifier = Modifier,
+            categoryViewModel = hiltViewModel(),
+            windowSizeClass = newsAppState.windowSizeClass,
+            appState = newsAppState,
+            categoryName = categoryName
+        )
     }
     composable(PROFILE_SCREEN) {
         ProfileScreen()

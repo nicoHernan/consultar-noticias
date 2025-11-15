@@ -24,12 +24,13 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
-        _homeUiState.update {currentState->
-            currentState.copy(categories = homeRepository.getListOfCategories())
-        }
+        loadListOfCategory()
         loadNewsInUs()
         loadMediaSourcesForDrawer()
     }
+
+
+
 
 
     private fun loadMediaSourcesForDrawer() {
@@ -79,6 +80,13 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
+
+
+    private fun loadListOfCategory() {
+        _homeUiState.update { currentState ->
+            currentState.copy(categories = homeRepository.getLocalCategories())
+        }
+    }
 
     fun loadCategoryContent(category: String) {
         viewModelScope.launch {

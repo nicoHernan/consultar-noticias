@@ -28,6 +28,8 @@ import androidx.navigation.navArgument
 import com.example.brevisimo_news.common.DrawerComposable
 import com.example.brevisimo_news.data.local.MediaDataSource
 import com.example.brevisimo_news.screens.category.CategoryScreen
+import com.example.brevisimo_news.screens.category.CategorySideEffect
+import com.example.brevisimo_news.screens.category.CategoryViewModel
 import com.example.brevisimo_news.screens.detail.DetailScreen
 import com.example.brevisimo_news.screens.home.HomeScreen
 import com.example.brevisimo_news.screens.home.HomeSideEffect
@@ -38,7 +40,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun NewsApp(windowSizeClass: WindowSizeClass, homeViewModel: HomeViewModel = hiltViewModel()) {
+fun NewsApp(
+    windowSizeClass: WindowSizeClass,
+    homeViewModel: HomeViewModel = hiltViewModel()
+) {
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -59,7 +64,6 @@ fun NewsApp(windowSizeClass: WindowSizeClass, homeViewModel: HomeViewModel = hil
             }
         }
     }
-
 
     ModalNavigationDrawer(
         drawerState = appState.drawerState,
@@ -85,6 +89,7 @@ fun NewsApp(windowSizeClass: WindowSizeClass, homeViewModel: HomeViewModel = hil
             }
         }
     )
+
 }
 
 

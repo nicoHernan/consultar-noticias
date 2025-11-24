@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.brevisimo_news.data.local.CategoryDataSource
 import com.example.brevisimo_news.data.repository.HomeRepository
+import com.example.brevisimo_news.domain.model.MediaDto
+import com.example.brevisimo_news.screens.home.HomeSideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,10 +23,26 @@ class CategoryViewModel @Inject constructor(
     private val homeRepository: HomeRepository
     ) : ViewModel() {
 
+
+    private val _categoryEffects = Channel<CategorySideEffect>(Channel.BUFFERED)
+    val categoryEffects = _categoryEffects.receiveAsFlow()
+
+
     private val _categoryUiState = MutableStateFlow(CategoryUiState())
     val categoryUiState: StateFlow<CategoryUiState> = _categoryUiState.asStateFlow()
 
     init {}
+
+
+    fun onCategoryClick(mediaDto: MediaDto) {
+        viewModelScope.launch {
+            mediaDto.url.let { url ->
+                if (url.isNotEmpty()) {
+                    _categoryEffects.send(CategorySideEffect.OpenExternalUrl(url))
+                }
+            }
+        }
+    }
 
      fun loadNewsByCategory(category: String) {
         viewModelScope.launch {

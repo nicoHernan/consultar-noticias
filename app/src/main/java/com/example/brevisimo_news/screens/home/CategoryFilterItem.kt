@@ -12,12 +12,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.brevisimo_news.data.local.CategoryDataSource
-import com.example.brevisimo_news.data.repository.HomeRepositoryImpl
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
 @Composable
-fun CategoryItem (
+fun CategoryFilterItem (
     modifier: Modifier = Modifier,
     categoryName: String,
     onClick: (String) -> Unit
@@ -44,7 +42,7 @@ fun CategoryItem (
 @Composable
 fun CategoryItemPreview() {
     Brevisimo_NewsTheme{
-        CategoryItem(
+        CategoryFilterItem(
           modifier = Modifier,
             categoryName = "Technology",
             onClick = {}

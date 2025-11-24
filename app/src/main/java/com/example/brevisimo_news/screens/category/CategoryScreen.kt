@@ -1,6 +1,8 @@
 package com.example.brevisimo_news.screens.category
 
+import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,15 +45,32 @@ fun CategoryScreen (
     windowSizeClass: WindowSizeClass
 ){
 
+    val context = LocalContext.current
+    val categoryUiState by categoryViewModel.categoryUiState.collectAsStateWithLifecycle()
+
+
     LaunchedEffect(key1 = categoryName){
         categoryViewModel.loadNewsByCategory(category = categoryName)
     }
 
-    val categoryUiState by categoryViewModel.categoryUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        categoryViewModel.categoryEffects.collect { effect ->
+            when (effect) {
+                is CategorySideEffect.OpenExternalUrl -> {
+
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
+                    context.startActivity(intent)
+                }
+            }
+        }
+    }
+
 
     CategoryPortraitLayout(
         modifier = modifier,
-        mediaDto = categoryUiState.newsByCategory
+        mediaDto = categoryUiState.newsByCategory,
+        onSourceSelected = categoryViewModel::onCategoryClick
     )
 }
 
@@ -58,7 +78,8 @@ fun CategoryScreen (
 @Composable
 fun CategoryContent (
     modifier: Modifier = Modifier,
-    mediaDto: List<MediaDto>
+    mediaDto: List<MediaDto>,
+    onSourceSelected: (MediaDto) -> Unit
 ){
     Column(
         modifier = Modifier.fillMaxSize()
@@ -89,7 +110,7 @@ fun CategoryContent (
                 items(mediaDto) { mediaDto ->
                     CategoryItem(
                         mediaDto = mediaDto,
-                        onClick = {}
+                        onClick = onSourceSelected
                     )
                 }
             }
@@ -102,7 +123,8 @@ fun CategoryContent (
 @Composable
 fun CategoryPortraitLayout (
     modifier: Modifier = Modifier,
-    mediaDto: List<MediaDto>
+    mediaDto: List<MediaDto>,
+    onSourceSelected: (MediaDto) -> Unit
 ){
     Brevisimo_NewsTheme {
         Scaffold (
@@ -120,7 +142,8 @@ fun CategoryPortraitLayout (
                 ){
                     CategoryContent(
                         modifier = Modifier.fillMaxSize(),
-                        mediaDto = mediaDto
+                        mediaDto = mediaDto,
+                        onSourceSelected = onSourceSelected
                     )
                 }
             },
@@ -154,7 +177,8 @@ fun PortraitPreview(){
     Brevisimo_NewsTheme {
         CategoryPortraitLayout(
             modifier = Modifier,
-            mediaDto = mediaDto
+            mediaDto = mediaDto,
+            onSourceSelected = {}
         )
     }
 }

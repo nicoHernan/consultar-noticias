@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -31,6 +33,97 @@ import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.MediaDto
 import com.example.brevisimo_news.domain.model.SourceDto
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
+
+
+@Composable
+fun CategoryCardComposable(
+    modifier: Modifier = Modifier,
+    mediaDto: MediaDto,
+    onClick: (MediaDto) -> Unit
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick(mediaDto) },
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                MediaSourceIcon(name = mediaDto.name)
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Text(
+                    text = mediaDto.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = mediaDto.description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "${mediaDto.country.uppercase()} | ${mediaDto.language.uppercase()}",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "CategoryCardDarkPreview"
+)
+@Preview
+@Composable
+fun CategoryCardPreview() {
+    Brevisimo_NewsTheme {
+        val mediaDto = MediaDto(
+            id = null,
+            name = "BBC Sport",
+            description = "The home of BBC Sport online. Includes live sports coverage, breaking news, results, video, audio and analysis on Football, F1, Cricket, Rugby Union, Rugby League, Golf, Tennis and all the main world sports, plus major events such as the Olympic Games.",
+            url = "http://www.bbc.co.uk/sport",
+            category = "sports",
+            language = "en",
+            country = "gb"
+        )
+        CategoryCardComposable(
+            modifier = Modifier,
+            onClick = {},
+            mediaDto = mediaDto
+        )
+    }
+}
+
 
 @Composable
 fun VerticalCardComposable (

@@ -110,6 +110,7 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
             splashViewModel = hiltViewModel()
         )
     }
+
     composable(HOME_SCREEN) {
         HomeScreen(
             modifier = Modifier,
@@ -118,11 +119,13 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
             appState = newsAppState
         )
     }
+
     composable(DETAIL_SCREEN) {
         DetailScreen()
     }
+
     composable(
-        route = "$CATEGORY_SCREEN / ${CATEGORY_ARGUMENTS}",
+        route = "$CATEGORY_SCREEN/{category_name}",
         arguments = listOf(
             navArgument(CATEGORY_ARGUMENTS) { type = NavType.StringType }
         )
@@ -134,10 +137,10 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
             modifier = Modifier,
             categoryViewModel = hiltViewModel(),
             windowSizeClass = newsAppState.windowSizeClass,
-            appState = newsAppState,
             categoryName = categoryName
         )
     }
+
     composable(PROFILE_SCREEN) {
         ProfileScreen()
     }

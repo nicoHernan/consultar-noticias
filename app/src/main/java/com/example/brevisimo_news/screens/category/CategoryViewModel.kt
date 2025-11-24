@@ -1,6 +1,7 @@
 package com.example.brevisimo_news.screens.category
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.brevisimo_news.data.local.CategoryDataSource
@@ -23,7 +24,7 @@ class CategoryViewModel @Inject constructor(
 
     init {}
 
-    private fun loadNewsByCategory(category: String) {
+     fun loadNewsByCategory(category: String) {
         viewModelScope.launch {
             _categoryUiState.update { currentState ->
                 currentState.copy(isLoading = true, isError = false)

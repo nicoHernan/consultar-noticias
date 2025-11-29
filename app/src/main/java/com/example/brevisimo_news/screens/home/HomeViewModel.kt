@@ -4,13 +4,17 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.brevisimo_news.data.repository.HomeRepository
+import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.MediaDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +32,6 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         loadNewsInUs()
         loadMediaSourcesForDrawer()
     }
-
 
 
 
@@ -88,26 +91,31 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
-    fun loadCategoryContent(category: String) {
-        viewModelScope.launch {
-            _homeUiState.update { it.copy(isLoading = true, isError = false) }
 
-            try {
-                val categoryContent = homeRepository.getCategoryContent(category)
-                _homeUiState.update {
-                    it.copy(
-                        isLoading = false,
-                        newsByCategory = categoryContent
-                    )
+
+    val filteredArticles: StateFlow<List<ArticleDto>> = homeUiState
+            .map { uiState ->
+                val originalList = uiState.newsInUs
+                val query = uiState.valueSearch.trim().lowercase()
+
+                if (query.isBlank()) {
+                    originalList
+                } else {
+
+                    originalList.filter { article ->
+
+                        val titleMatch = article.title.lowercase().contains(query)
+                        val descriptionMatch = article.description?.lowercase()?.contains(query) ?: false
+
+                        titleMatch || descriptionMatch
+                    }
                 }
-            } catch (e: Exception) {
-                Log.e("DATA_ERROR", "Fallo al obtener contenido de la categoría: ${e.message}", e)
-                _homeUiState.update { it.copy(isLoading = false, isError = true) }
             }
-        }
-    }
-
-
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
     fun onSearch(newValue: String){
         _homeUiState.update { currentState->
             currentState.copy(valueSearch = newValue)

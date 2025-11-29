@@ -34,8 +34,8 @@ fun SearchComposable(
         singleLine = true,
         shape = RoundedCornerShape(8.dp),
         value = value,
-        onValueChange = {
-            onValueChange(value)
+        onValueChange = {newValue->
+            onValueChange(newValue)
         },
         placeholder = {
             Text(

@@ -52,13 +52,14 @@ fun HomeScreen(
     appState: NewsAppState
 ) {
     val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
+    val filteredArticles by homeViewModel.filteredArticles.collectAsStateWithLifecycle()
 
     HomePortraitLayout(
         modifier = modifier,
         categories = homeUiState.categories,
         homeUiState = homeUiState,
         onSearch = homeViewModel::onSearch,
-        articleDto = homeUiState.newsInUs,
+        articleDto = filteredArticles,
         openDrawer = appState::openDrawer,
         onCategorySelected = appState::navigateToCategory
     )

@@ -15,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat.getString
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -26,10 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.brevisimo_news.common.DrawerComposable
-import com.example.brevisimo_news.data.local.MediaDataSource
 import com.example.brevisimo_news.screens.category.CategoryScreen
-import com.example.brevisimo_news.screens.category.CategorySideEffect
-import com.example.brevisimo_news.screens.category.CategoryViewModel
 import com.example.brevisimo_news.screens.detail.DetailScreen
 import com.example.brevisimo_news.screens.home.HomeScreen
 import com.example.brevisimo_news.screens.home.HomeSideEffect
@@ -37,7 +33,6 @@ import com.example.brevisimo_news.screens.home.HomeViewModel
 import com.example.brevisimo_news.screens.profile.ProfileScreen
 import com.example.brevisimo_news.screens.splash.SplashScreen
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun NewsApp(

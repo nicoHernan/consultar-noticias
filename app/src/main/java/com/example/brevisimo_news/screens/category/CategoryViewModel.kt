@@ -1,13 +1,10 @@
 package com.example.brevisimo_news.screens.category
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.brevisimo_news.data.local.CategoryDataSource
 import com.example.brevisimo_news.data.repository.HomeRepository
 import com.example.brevisimo_news.domain.model.MediaDto
-import com.example.brevisimo_news.screens.home.HomeSideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

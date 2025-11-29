@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.brevisimo_news.NewsAppState
 import com.example.brevisimo_news.R
-import com.example.brevisimo_news.common.NavigationBarComposable
+import com.example.brevisimo_news.common.BottomNavigationBarComposable
 import com.example.brevisimo_news.common.SearchComposable
 import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.SourceDto
@@ -49,7 +49,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
     windowSizeClass: WindowSizeClass,
-    appState: NewsAppState
+    newsAppState: NewsAppState
 ) {
     val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
     val filteredArticles by homeViewModel.filteredArticles.collectAsStateWithLifecycle()
@@ -60,8 +60,8 @@ fun HomeScreen(
         homeUiState = homeUiState,
         onSearch = homeViewModel::onSearch,
         articleDto = filteredArticles,
-        openDrawer = appState::openDrawer,
-        onCategorySelected = appState::navigateToCategory
+        openDrawer = newsAppState::openDrawer,
+        onCategorySelected = newsAppState::navigateToCategory
     )
 }
 
@@ -190,7 +190,7 @@ fun HomePortraitLayout (
                 }
             },
             bottomBar = {
-                NavigationBarComposable(
+                BottomNavigationBarComposable(
                     modifier = modifier,
                     textHome = R.string.home_navigation_bar,
                     textProfile = R.string.profile_navigation_bar,

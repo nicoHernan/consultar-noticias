@@ -116,7 +116,7 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
             modifier = Modifier,
             homeViewModel = hiltViewModel(),
             windowSizeClass = newsAppState.windowSizeClass,
-            appState = newsAppState
+            newsAppState = newsAppState
         )
     }
 
@@ -137,7 +137,8 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
             modifier = Modifier,
             categoryViewModel = hiltViewModel(),
             windowSizeClass = newsAppState.windowSizeClass,
-            categoryName = categoryName
+            categoryName = categoryName,
+            newsAppState = newsAppState
         )
     }
 

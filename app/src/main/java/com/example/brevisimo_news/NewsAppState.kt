@@ -14,7 +14,7 @@ class NewsAppState (
     private val coroutineScope: CoroutineScope
 ){
 
-    fun popUp() {
+    fun navigateBack() {
         navHostController.popBackStack()
     }
 

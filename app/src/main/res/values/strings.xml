@@ -3,6 +3,7 @@
     <!-- COMMON -->
     <string name="placeholder_search">Search the entire site</string>
     <string name="home_navigation_bar">Home</string>
+    <string name="top_navigation_bar">Go back</string>
     <string name="profile_navigation_bar">Profile</string>
     <string name="drawer_composable">Media</string>
 </resources>

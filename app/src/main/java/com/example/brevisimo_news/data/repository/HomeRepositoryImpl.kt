@@ -29,10 +29,6 @@ class HomeRepositoryImpl @Inject constructor(
             ?: emptyList()
     }
 
-    override suspend fun getDomain(domains: String): List<ArticleDto> {
-        return newsApiService.getEverythingByDomain(domains = domains, apiKey = API_KEY).articles ?: emptyList()
-    }
-
     override fun getLocalMediaSources(): List<MediaDto> {
        return mediaDataSource.media
     }

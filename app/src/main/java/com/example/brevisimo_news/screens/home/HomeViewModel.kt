@@ -56,6 +56,16 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
+    fun onArticleDto(articleDto: ArticleDto) {
+        viewModelScope.launch {
+            articleDto.url.let { url ->
+                if (url.isNotEmpty()) {
+                    _sideEffects.send(HomeSideEffect.OpenExternalUrl(url))
+                }
+            }
+        }
+    }
+
     private fun loadNewsInUs() {
         viewModelScope.launch {
             _homeUiState.update { currentState ->

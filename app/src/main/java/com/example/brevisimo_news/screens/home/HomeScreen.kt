@@ -1,7 +1,9 @@
 package com.example.brevisimo_news.screens.home
 
 
+import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,9 +29,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +46,7 @@ import com.example.brevisimo_news.common.BottomNavigationBarComposable
 import com.example.brevisimo_news.common.SearchComposable
 import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.SourceDto
+import com.example.brevisimo_news.screens.category.CategorySideEffect
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
 @Composable
@@ -51,8 +56,25 @@ fun HomeScreen(
     windowSizeClass: WindowSizeClass,
     newsAppState: NewsAppState
 ) {
+
+    val context = LocalContext.current
     val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
     val filteredArticles by homeViewModel.filteredArticles.collectAsStateWithLifecycle()
+
+
+
+    LaunchedEffect(Unit) {
+        homeViewModel.sideEffects.collect { effect ->
+            when (effect) {
+                is HomeSideEffect.OpenExternalUrl -> {
+
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
+                    context.startActivity(intent)
+                }
+            }
+        }
+    }
+
 
     HomePortraitLayout(
         modifier = modifier,
@@ -61,7 +83,8 @@ fun HomeScreen(
         onSearch = homeViewModel::onSearch,
         articleDto = filteredArticles,
         openDrawer = newsAppState::openDrawer,
-        onCategorySelected = newsAppState::navigateToCategory
+        onCategorySelected = newsAppState::navigateToCategory,
+        onArticleDto = homeViewModel::onArticleDto
     )
 }
 
@@ -74,7 +97,8 @@ fun HomeContent (
     articleDto: List<ArticleDto>,
     homeUiState: HomeUiState,
     onSearch: (String) -> Unit,
-    onCategorySelected: (String) -> Unit
+    onCategorySelected: (String) -> Unit,
+    onArticleDto: (articleDto: ArticleDto) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -137,7 +161,7 @@ fun HomeContent (
                         modifier = Modifier.fillMaxWidth(),
                         articleDto = articleDto,
                         previewImage = R.drawable.imagen_para_renderizar,
-                        onClick = {}
+                        onClick = {onArticleDto(articleDto)}
                     )
                 }
             }
@@ -155,7 +179,8 @@ fun HomePortraitLayout (
     homeUiState: HomeUiState,
     onSearch: (String) -> Unit,
     openDrawer: () -> Unit,
-    onCategorySelected: (String) -> Unit
+    onCategorySelected: (String) -> Unit,
+    onArticleDto: (articleDto: ArticleDto) -> Unit
 ){
     Brevisimo_NewsTheme{
         Scaffold(
@@ -185,7 +210,8 @@ fun HomePortraitLayout (
                         homeUiState = homeUiState,
                         onSearch = onSearch,
                         articleDto = articleDto,
-                        onCategorySelected = onCategorySelected
+                        onCategorySelected = onCategorySelected,
+                        onArticleDto = onArticleDto
                     )
                 }
             },
@@ -239,7 +265,8 @@ fun PortraitPreview() {
             onSearch = {},
             articleDto = articleDto,
             openDrawer = {},
-            onCategorySelected = {}
+            onCategorySelected = {},
+            onArticleDto = {}
         )
     }
 }

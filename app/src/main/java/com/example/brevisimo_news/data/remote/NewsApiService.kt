@@ -20,11 +20,4 @@ interface NewsApiService {
         @Query("category") category: String,
         @Query("apiKey") apiKey: String
     ): MediaResponse
-
-
-    @GET("v2/everything")
-    suspend fun getEverythingByDomain(
-        @Query("domains") domains: String,
-        @Query("apiKey") apiKey: String
-    ): NewsResponse
 }

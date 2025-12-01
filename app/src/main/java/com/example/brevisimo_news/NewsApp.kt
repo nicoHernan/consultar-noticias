@@ -26,7 +26,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.brevisimo_news.common.DrawerComposable
 import com.example.brevisimo_news.screens.category.CategoryScreen
-import com.example.brevisimo_news.screens.detail.DetailScreen
 import com.example.brevisimo_news.screens.home.HomeScreen
 import com.example.brevisimo_news.screens.home.HomeSideEffect
 import com.example.brevisimo_news.screens.home.HomeViewModel
@@ -118,10 +117,6 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
             windowSizeClass = newsAppState.windowSizeClass,
             newsAppState = newsAppState
         )
-    }
-
-    composable(DETAIL_SCREEN) {
-        DetailScreen()
     }
 
     composable(

@@ -53,5 +53,4 @@ class NewsAppState (
             launchSingleTop = true
         }
     }
-
 }

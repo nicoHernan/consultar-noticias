@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "650439464002",
+    "project_id": "brevisimo-news-669e5",
+    "storage_bucket": "brevisimo-news-669e5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650439464002:android:ecd2ea170047e818d409db",
+        "android_client_info": {
+          "package_name": "com.example.brevisimo_news"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc0kgs06skrbJQJqZ1dtCzZVSzBiW2gYE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

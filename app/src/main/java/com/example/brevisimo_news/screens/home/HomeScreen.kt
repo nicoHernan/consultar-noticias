@@ -46,7 +46,6 @@ import com.example.brevisimo_news.common.BottomNavigationBarComposable
 import com.example.brevisimo_news.common.SearchComposable
 import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.SourceDto
-import com.example.brevisimo_news.screens.category.CategorySideEffect
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
 @Composable

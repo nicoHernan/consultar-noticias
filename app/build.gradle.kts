@@ -5,6 +5,8 @@ plugins {
     //HILT PLUGIN
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    //FIREBASE PLUGIN
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -47,6 +49,8 @@ android {
 }
 
 dependencies {
+    //FIREBASE
+    implementation(platform(libs.firebase.bom))
     //HILT
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt)

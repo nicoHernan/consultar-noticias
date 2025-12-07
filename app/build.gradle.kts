@@ -51,6 +51,7 @@ android {
 dependencies {
     //FIREBASE
     implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ai)
     //HILT
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt)

@@ -9,8 +9,10 @@ data class HomeUiState(
     val categories: List<String> = emptyList(),
     val newsByCategory: List<MediaDto> = emptyList(),
     val newsInUs: List<ArticleDto> = emptyList(),
-
-    val isLoading: Boolean = false,
+    val entityName: String = "",
+    val entityDescription: String = "",
+    val isAiLoading: Boolean = false,
+    val isAppLoading: Boolean = false,
     val isError: Boolean = false,
     val valueSearch: String = ""
 )

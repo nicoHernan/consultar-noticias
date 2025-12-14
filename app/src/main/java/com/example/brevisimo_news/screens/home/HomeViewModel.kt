@@ -3,6 +3,7 @@ package com.example.brevisimo_news.screens.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.brevisimo_news.data.repository.AIResporitory
 import com.example.brevisimo_news.data.repository.HomeRepository
 import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.MediaDto
@@ -20,7 +21,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val homeRepository: HomeRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val homeRepository: HomeRepository,
+    private val aiResporitory: AIResporitory
+    ) : ViewModel() {
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
 
@@ -34,7 +38,44 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     }
 
 
+     fun getEntity(articleContent: String) {
+        viewModelScope.launch {
+            _homeUiState.update { currentState ->
+                currentState.copy(isAiLoading = true, isError = false)
+            }
 
+            try {
+                val result = aiResporitory.extractKeyEntities(text = articleContent )
+                _homeUiState.update { currentState->
+                    currentState.copy(
+                        entityName = result[0],
+                        entityDescription = result[1],
+                        isAiLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("DATA_ERROR", "Fallo al obtener noticias: ${e.message}", e)
+                _homeUiState.update { currentState ->
+                    currentState.copy(
+                        isError = true,
+                        isAiLoading = false,
+                        newsInUs = emptyList()
+                    )
+                }
+            }
+        }
+    }
+
+    fun resetAi() {
+        _homeUiState.update {currentState ->
+            currentState.copy(
+                isAiLoading = false,
+                isError = false,
+                entityName = "",
+                entityDescription = ""
+            )
+        }
+    }
 
     private fun loadMediaSourcesForDrawer() {
         val mediaSources = homeRepository.getLocalMediaSources()
@@ -69,7 +110,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     private fun loadNewsInUs() {
         viewModelScope.launch {
             _homeUiState.update { currentState ->
-                currentState.copy(isLoading = true, isError = false)
+                currentState.copy(isAppLoading = true, isError = false)
             }
 
             try {
@@ -77,7 +118,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 _homeUiState.update { currentState->
                     currentState.copy(
                         newsInUs = newsInUs,
-                        isLoading = false
+                        isAppLoading = false
                     )
                 }
             } catch (e: Exception) {
@@ -85,7 +126,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 _homeUiState.update { currentState ->
                     currentState.copy(
                         isError = true,
-                        isLoading = false,
+                        isAppLoading = false,
                         newsInUs = emptyList()
                     )
                 }

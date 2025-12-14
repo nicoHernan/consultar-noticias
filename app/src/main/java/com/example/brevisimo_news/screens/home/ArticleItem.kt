@@ -18,13 +18,15 @@ fun VerticalArticleItem (
     modifier: Modifier = Modifier,
     articleDto: ArticleDto,
     @DrawableRes previewImage: Int?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onGetEntity: (articleContent: String) -> Unit
 ){
     VerticalCardComposable(
         modifier = modifier,
         articleDto = articleDto,
         previewImage = previewImage,
-        onClick = onClick
+        onClick = onClick,
+        onGetEntity = onGetEntity
     )
 }
 
@@ -54,7 +56,8 @@ fun VerticalArticlePreview() {
             modifier = Modifier,
             articleDto = articleDto,
             previewImage = R.drawable.imagen_para_renderizar,
-            onClick = {}
+            onClick = {},
+            onGetEntity = {}
         )
     }
 }

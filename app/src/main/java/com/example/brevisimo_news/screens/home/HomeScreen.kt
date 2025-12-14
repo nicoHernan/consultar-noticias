@@ -42,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.brevisimo_news.NewsAppState
 import com.example.brevisimo_news.R
+import com.example.brevisimo_news.common.AIDialog
 import com.example.brevisimo_news.common.BottomNavigationBarComposable
 import com.example.brevisimo_news.common.SearchComposable
 import com.example.brevisimo_news.domain.model.ArticleDto
@@ -83,7 +84,9 @@ fun HomeScreen(
         articleDto = filteredArticles,
         openDrawer = newsAppState::openDrawer,
         onCategorySelected = newsAppState::navigateToCategory,
-        onArticleDto = homeViewModel::onArticleDto
+        onArticleDto = homeViewModel::onArticleDto,
+        onGetEntity = homeViewModel::getEntity,
+        onDismissDialog = homeViewModel::resetAi
     )
 }
 
@@ -97,7 +100,8 @@ fun HomeContent (
     homeUiState: HomeUiState,
     onSearch: (String) -> Unit,
     onCategorySelected: (String) -> Unit,
-    onArticleDto: (articleDto: ArticleDto) -> Unit
+    onArticleDto: (articleDto: ArticleDto) -> Unit,
+    onGetEntity: (articleContent: String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -160,7 +164,8 @@ fun HomeContent (
                         modifier = Modifier.fillMaxWidth(),
                         articleDto = articleDto,
                         previewImage = R.drawable.imagen_para_renderizar,
-                        onClick = {onArticleDto(articleDto)}
+                        onClick = {onArticleDto(articleDto)},
+                        onGetEntity = onGetEntity
                     )
                 }
             }
@@ -179,7 +184,9 @@ fun HomePortraitLayout (
     onSearch: (String) -> Unit,
     openDrawer: () -> Unit,
     onCategorySelected: (String) -> Unit,
-    onArticleDto: (articleDto: ArticleDto) -> Unit
+    onArticleDto: (articleDto: ArticleDto) -> Unit,
+    onGetEntity: (articleContent: String) -> Unit,
+    onDismissDialog: () -> Unit
 ){
     Brevisimo_NewsTheme{
         Scaffold(
@@ -210,7 +217,16 @@ fun HomePortraitLayout (
                         onSearch = onSearch,
                         articleDto = articleDto,
                         onCategorySelected = onCategorySelected,
-                        onArticleDto = onArticleDto
+                        onArticleDto = onArticleDto,
+                        onGetEntity = onGetEntity
+                    )
+                }
+
+                val showAiDialog = homeUiState.isAiLoading || homeUiState.isError || homeUiState.entityName.isNotEmpty()
+                if (showAiDialog) {
+                    AIDialog(
+                        homeUiState = homeUiState,
+                        onDismissDialog = onDismissDialog
                     )
                 }
             },
@@ -265,7 +281,9 @@ fun PortraitPreview() {
             articleDto = articleDto,
             openDrawer = {},
             onCategorySelected = {},
-            onArticleDto = {}
+            onArticleDto = {},
+            onGetEntity = {},
+            onDismissDialog = {}
         )
     }
 }

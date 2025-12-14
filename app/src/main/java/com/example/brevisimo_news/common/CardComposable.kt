@@ -13,8 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -130,7 +134,8 @@ fun VerticalCardComposable (
     modifier: Modifier = Modifier,
     articleDto: ArticleDto? = null,
     @DrawableRes previewImage: Int? = R.drawable.imagen_para_renderizar,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onGetEntity: (articleContent: String) -> Unit
 ) {
 
     Card(
@@ -163,6 +168,34 @@ fun VerticalCardComposable (
                 fontWeight = FontWeight.Bold,
                 maxLines = 3
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val articleContent = articleDto?.content
+                val isContentAvailable = !articleContent.isNullOrBlank()
+
+                IconButton(
+                    onClick = {
+                        if (isContentAvailable) {
+                            onGetEntity(articleContent!!)
+                        }else{
+                            //TODO, CREAR UN SNACKBAR
+                        }
+                    },
+                    enabled = isContentAvailable
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = "Obtener contexto de IA",
+                        tint =
+                            if (isContentAvailable) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                    )
+                }
+            }
 
             Spacer(Modifier.height(8.dp))
 
@@ -304,7 +337,8 @@ fun VerticalPreview() {
             modifier = Modifier,
             articleDto = articleDto,
             previewImage = R.drawable.imagen_para_renderizar ,
-            onClick = {}
+            onClick = {},
+            onGetEntity = {}
         )
     }
 }

@@ -29,7 +29,7 @@ import com.example.brevisimo_news.screens.category.CategoryScreen
 import com.example.brevisimo_news.screens.home.HomeScreen
 import com.example.brevisimo_news.screens.home.HomeSideEffect
 import com.example.brevisimo_news.screens.home.HomeViewModel
-import com.example.brevisimo_news.screens.profile.ProfileScreen
+import com.example.brevisimo_news.screens.login.LoginScreen
 import com.example.brevisimo_news.screens.splash.SplashScreen
 import kotlinx.coroutines.CoroutineScope
 
@@ -110,6 +110,16 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
         )
     }
 
+    composable(LOGIN_SCREEN) {
+        LoginScreen(
+            modifier = Modifier,
+            onSignInGuest = {
+                newsAppState.navigateAndPopUp(HOME_SCREEN, LOGIN_SCREEN)
+            },
+            onSignInGoogle = {}
+        )
+    }
+
     composable(HOME_SCREEN) {
         HomeScreen(
             modifier = Modifier,
@@ -135,9 +145,5 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
             categoryName = categoryName,
             newsAppState = newsAppState
         )
-    }
-
-    composable(PROFILE_SCREEN) {
-        ProfileScreen()
     }
 }

@@ -1,0 +1,36 @@
+package com.example.brevisimo_news.data.repository
+
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class AuthRepositoryImpl @Inject constructor(
+    private val firebaseAuth: FirebaseAuth
+) : AuthRepository{
+    override suspend fun signInAnonymously(): Flow<Resource<FirebaseUser>> = flow {
+        emit(Resource.Loading)
+        try {
+            val authResult = firebaseAuth.signInAnonymously().await()
+
+            val user = authResult.user
+
+            if (user != null) {
+                emit(Resource.Success(user))
+            } else {
+                emit(Resource.Error("El usuario de Firebase es nulo después de la autenticación anónima."))
+            }
+        } catch (e: Exception) {
+            emit(Resource.Error("Fallo en la autenticación anónima: ${e.localizedMessage}", e))
+        }
+    }
+
+    override fun getCurrentUser(): FirebaseUser? {
+        return firebaseAuth.currentUser
+    }
+
+}

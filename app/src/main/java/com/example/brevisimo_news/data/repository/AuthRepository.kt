@@ -1,0 +1,11 @@
+package com.example.brevisimo_news.data.repository
+
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.flow.Flow
+
+interface AuthRepository {
+
+    suspend fun signInAnonymously(): Flow<Resource<FirebaseUser>>
+
+    fun getCurrentUser(): FirebaseUser?
+}

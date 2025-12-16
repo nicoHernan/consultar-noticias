@@ -50,12 +50,12 @@ android {
 
 dependencies {
     //FIREBASE
+    implementation(libs.firebase.auth)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.ai)
     //HILT
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt)
-    implementation(libs.androidx.compose.foundation)
     ksp(libs.hilt.compiler)
     //VIEWMODEL
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.retrofit2)
 
 
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

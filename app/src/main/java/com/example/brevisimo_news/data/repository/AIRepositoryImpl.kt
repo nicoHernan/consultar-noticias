@@ -3,9 +3,9 @@ package com.example.brevisimo_news.data.repository
 import com.google.firebase.ai.GenerativeModel
 import javax.inject.Inject
 
-class AIResporitoryImpl @Inject constructor(
+class AIRepositoryImpl @Inject constructor(
     private val generativeModel: GenerativeModel
-): AIResporitory {
+): AIRepository {
 
 
     override suspend fun extractKeyEntities(text: String): List<String> {

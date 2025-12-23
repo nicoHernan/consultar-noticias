@@ -3,7 +3,8 @@ package com.example.brevisimo_news.screens.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.brevisimo_news.data.repository.AIResporitory
+import com.example.brevisimo_news.data.repository.AIRepository
+import com.example.brevisimo_news.data.repository.AuthRepository
 import com.example.brevisimo_news.data.repository.HomeRepository
 import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.MediaDto
@@ -23,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
-    private val aiResporitory: AIResporitory
+    private val aiRepository: AIRepository,
+    private val authRepository: AuthRepository
     ) : ViewModel() {
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
@@ -38,6 +40,11 @@ class HomeViewModel @Inject constructor(
     }
 
 
+    fun checkUserStatus() {
+        val isAnonymous = authRepository.isUserAnonymous()
+        _homeUiState.update { currentState ->
+            currentState.copy(isGuestUser = isAnonymous) }
+    }
      fun getEntity(articleContent: String) {
         viewModelScope.launch {
             _homeUiState.update { currentState ->
@@ -45,7 +52,7 @@ class HomeViewModel @Inject constructor(
             }
 
             try {
-                val result = aiResporitory.extractKeyEntities(text = articleContent )
+                val result = aiRepository.extractKeyEntities(text = articleContent )
                 _homeUiState.update { currentState->
                     currentState.copy(
                         entityName = result[0],

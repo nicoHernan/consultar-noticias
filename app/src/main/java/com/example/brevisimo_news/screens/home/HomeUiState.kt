@@ -14,5 +14,6 @@ data class HomeUiState(
     val isAiLoading: Boolean = false,
     val isAppLoading: Boolean = false,
     val isError: Boolean = false,
-    val valueSearch: String = ""
+    val valueSearch: String = "",
+    val isGuestUser: Boolean = true
 )

@@ -25,12 +25,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,7 +43,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.brevisimo_news.HOME_SCREEN
 import com.example.brevisimo_news.NewsAppState
+import com.example.brevisimo_news.PROFILE_SCREEN
 import com.example.brevisimo_news.R
 import com.example.brevisimo_news.common.AIDialog
 import com.example.brevisimo_news.common.BottomNavigationBarComposable
@@ -86,7 +91,18 @@ fun HomeScreen(
         onCategorySelected = newsAppState::navigateToCategory,
         onArticleDto = homeViewModel::onArticleDto,
         onGetEntity = homeViewModel::getEntity,
-        onDismissDialog = homeViewModel::resetAi
+        onDismissDialog = homeViewModel::resetAi,
+        onHomeIcon = {
+            newsAppState.navigate(HOME_SCREEN)
+        },
+        onProfileIcon = {
+            if (homeUiState.isGuestUser) {
+                newsAppState.showSnackbar("Debes iniciar sesión con Google")
+            } else {
+                newsAppState.navigate(PROFILE_SCREEN)
+            }
+        },
+        snackbarHostState = newsAppState.snackbarHostState
     )
 }
 
@@ -186,11 +202,19 @@ fun HomePortraitLayout (
     onCategorySelected: (String) -> Unit,
     onArticleDto: (articleDto: ArticleDto) -> Unit,
     onGetEntity: (articleContent: String) -> Unit,
-    onDismissDialog: () -> Unit
+    onDismissDialog: () -> Unit,
+    onHomeIcon: () -> Unit,
+    onProfileIcon: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ){
     Brevisimo_NewsTheme{
         Scaffold(
             modifier = modifier.fillMaxSize(),
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState
+                )
+            },
             topBar = {
                 TopAppBar(
                     title = { Text(stringResource(R.string.app_name)) },
@@ -237,7 +261,8 @@ fun HomePortraitLayout (
                     textProfile = R.string.profile_navigation_bar,
                     iconHome = Icons.Filled.Home,
                     iconProfile = Icons.Filled.Person,
-                    onClick = {}
+                    onHomeNavigationIcon = onHomeIcon,
+                    onProfileNavigationIcon = onProfileIcon
                 )
             }
         )
@@ -253,7 +278,7 @@ fun HomePortraitLayout (
 @Preview(showBackground = true)
 @Composable
 fun PortraitPreview() {
-
+    val snackbarHostState = remember { SnackbarHostState()}
     val uiState = HomeUiState(valueSearch = "")
     val previewCategories = listOf("Business", "General", "Entertainment", "Health", "Science", "Sports", "Technology")
 
@@ -283,7 +308,10 @@ fun PortraitPreview() {
             onCategorySelected = {},
             onArticleDto = {},
             onGetEntity = {},
-            onDismissDialog = {}
+            onDismissDialog = {},
+            onHomeIcon = {},
+            onProfileIcon = {},
+            snackbarHostState = snackbarHostState
         )
     }
 }

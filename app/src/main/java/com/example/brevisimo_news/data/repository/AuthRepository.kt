@@ -8,4 +8,5 @@ interface AuthRepository {
     suspend fun signInAnonymously(): Flow<Resource<FirebaseUser>>
 
     fun getCurrentUser(): FirebaseUser?
+    fun isUserAnonymous(): Boolean
 }

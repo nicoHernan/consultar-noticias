@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.brevisimo_news.common.DrawerComposable
+import com.example.brevisimo_news.screens.ProfileScreen
 import com.example.brevisimo_news.screens.category.CategoryScreen
 import com.example.brevisimo_news.screens.home.HomeScreen
 import com.example.brevisimo_news.screens.home.HomeSideEffect
@@ -91,12 +93,19 @@ fun NewsApp(
 fun rememberAppState(
     navHostController: NavHostController = rememberNavController(),
     windowSizeClass: WindowSizeClass,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ): NewsAppState {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    return remember(navHostController, windowSizeClass, coroutineScope) {
-        NewsAppState(navHostController, windowSizeClass = windowSizeClass , drawerState = drawerState, coroutineScope = coroutineScope )
+    return remember(navHostController, windowSizeClass, coroutineScope, snackbarHostState) {
+        NewsAppState(
+            navHostController,
+            windowSizeClass = windowSizeClass ,
+            drawerState = drawerState,
+            coroutineScope = coroutineScope,
+            snackbarHostState = snackbarHostState
+        )
     }
 }
 
@@ -126,6 +135,11 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
             homeViewModel = hiltViewModel(),
             windowSizeClass = newsAppState.windowSizeClass,
             newsAppState = newsAppState
+        )
+    }
+
+    composable(PROFILE_SCREEN) {
+        ProfileScreen(
         )
     }
 

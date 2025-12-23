@@ -29,6 +29,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun isUserAnonymous(): Boolean {
+        return firebaseAuth.currentUser?.isAnonymous ?: true
+    }
+
     override fun getCurrentUser(): FirebaseUser? {
         return firebaseAuth.currentUser
     }

@@ -71,7 +71,8 @@ fun BottomNavigationBarComposable(
     @StringRes textProfile: Int,
     iconHome: ImageVector,
     iconProfile: ImageVector,
-    onClick: () -> Unit
+    onHomeNavigationIcon: () -> Unit,
+    onProfileNavigationIcon: () -> Unit,
 ) {
     NavigationBar(
         modifier = modifier
@@ -87,7 +88,7 @@ fun BottomNavigationBarComposable(
                 Text(text = stringResource(textHome))
             },
             selected = false,
-            onClick = onClick
+            onClick = onHomeNavigationIcon
         )
 
         NavigationBarItem(
@@ -101,7 +102,7 @@ fun BottomNavigationBarComposable(
                 Text(text = stringResource(textProfile))
             },
             selected = false,
-            onClick = onClick
+            onClick = onProfileNavigationIcon
         )
     }
 }
@@ -140,7 +141,8 @@ fun BottomNavigationPreview(){
             textProfile = R.string.profile_navigation_bar,
             iconHome = Icons.Filled.Home,
             iconProfile = Icons.Filled.Person,
-            onClick = {}
+            onHomeNavigationIcon = {},
+            onProfileNavigationIcon = {}
         )
     }
 }

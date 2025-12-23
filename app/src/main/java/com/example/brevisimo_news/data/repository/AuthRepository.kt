@@ -9,4 +9,5 @@ interface AuthRepository {
 
     fun getCurrentUser(): FirebaseUser?
     fun isUserAnonymous(): Boolean
+    suspend fun signInWithGoogle(idToken: String): Flow<Resource<FirebaseUser>>
 }

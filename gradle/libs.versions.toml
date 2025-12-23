@@ -1,6 +1,8 @@
 [versions]
+androidxCredentialsCredentials = "1.6.0-rc01"
 coil3 = "3.2.0"
 firebaseBom = "34.6.0"
+googleid = "1.1.1"
 gson = "2.12.1"
 converter-gson = "2.9.0"
 hiltNavigationCompose = "1.2.0"
@@ -21,6 +23,9 @@ foundation = "1.9.3"
 
 
 [libraries]
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+androidx-credentials-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidxCredentialsCredentials" }
+androidx-credentials-credentials3 = { module = "androidx.credentials:credentials", version.ref = "androidxCredentialsCredentials" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 coil3-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil3" }
 coil3-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil3" }

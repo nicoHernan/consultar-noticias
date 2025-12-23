@@ -11,4 +11,8 @@
     <string name="outlinedButton_composable">Iniciar Sesión con Google</string>
     <string name="button_composable">Continuar como Invitado</string>
     <string name="bottomBar_text">Accede a tus noticias favoritas y sincroniza tu lectura.</string>
+
+    <!-- LOGIN -->
+    <string name="default_web_client_id">650439464002-7skf4s4snuh10piuh1q0946bdh0nuk80.apps.googleusercontent.com</string>
+
 </resources>

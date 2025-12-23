@@ -2,6 +2,7 @@ package com.example.brevisimo_news.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -35,6 +36,19 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun getCurrentUser(): FirebaseUser? {
         return firebaseAuth.currentUser
+    }
+
+    override suspend fun signInWithGoogle(idToken: String): Flow<Resource<FirebaseUser>> = flow {
+        emit(Resource.Loading)
+        try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val authResult = firebaseAuth.signInWithCredential(credential).await()
+            authResult.user?.let {
+                emit(Resource.Success(it))
+            } ?: emit(Resource.Error("Error al obtener usuario"))
+        } catch (e: Exception){
+            emit(Resource.Error(e.localizedMessage ?: "Error desconocido"))
+        }
     }
 
 }

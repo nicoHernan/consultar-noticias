@@ -12,7 +12,20 @@
           "package_name": "com.example.brevisimo_news"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "650439464002-m9qdcikcpk918r3cnss771t3jblnhk0l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.brevisimo_news",
+            "certificate_hash": "f45229a03091ea578c5ee420b91063da09fee02d"
+          }
+        },
+        {
+          "client_id": "650439464002-7skf4s4snuh10piuh1q0946bdh0nuk80.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAc0kgs06skrbJQJqZ1dtCzZVSzBiW2gYE"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "650439464002-7skf4s4snuh10piuh1q0946bdh0nuk80.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

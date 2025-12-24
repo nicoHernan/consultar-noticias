@@ -12,7 +12,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth
-) : AuthRepository{
+) : AuthRepository {
+
     override suspend fun signInAnonymously(): Flow<Resource<FirebaseUser>> = flow {
         emit(Resource.Loading)
         try {
@@ -46,9 +47,18 @@ class AuthRepositoryImpl @Inject constructor(
             authResult.user?.let {
                 emit(Resource.Success(it))
             } ?: emit(Resource.Error("Error al obtener usuario"))
-        } catch (e: Exception){
+        } catch (e: Exception) {
             emit(Resource.Error(e.localizedMessage ?: "Error desconocido"))
         }
     }
 
+    override suspend fun signOut(): Flow<Resource<Unit>> = flow {
+        emit(Resource.Loading)
+        try {
+            firebaseAuth.signOut()
+            emit(Resource.Success(Unit))
+        } catch (e: Exception) {
+            emit(Resource.Error("Error al cerrar sesión: ${e.localizedMessage}"))
+        }
+    }
 }

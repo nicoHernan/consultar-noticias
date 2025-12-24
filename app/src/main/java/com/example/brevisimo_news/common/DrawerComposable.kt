@@ -13,10 +13,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -25,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,9 +44,11 @@ import kotlinx.coroutines.launch
 fun DrawerComposable (
     onSourceSelected: (MediaDto) -> Unit,
     mediaDto: List<MediaDto>,
-    @StringRes text: Int
+    @StringRes text: Int,
+    onSignOut: () -> Unit
 ){
     DrawerContent(
+        onSignOut = onSignOut,
         onSourceSelected = onSourceSelected,
         text = text,
         mediaDto = mediaDto
@@ -51,6 +58,7 @@ fun DrawerComposable (
 
 @Composable
 fun DrawerContent(
+    onSignOut: () -> Unit,
     onSourceSelected: (MediaDto) -> Unit,
     mediaDto: List<MediaDto>,
     @StringRes text: Int,
@@ -73,37 +81,55 @@ fun DrawerContent(
 
         HorizontalDivider()
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 8.dp),
-                state = listState
-            ) {
-                items(mediaDto) { mediaDto ->
-                    DrawerItem(
-                        modifier = Modifier,
-                        onClick = {
-                            onSourceSelected(mediaDto)
+            Box(modifier = Modifier.weight(1f)) {
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(vertical = 8.dp),
+                    state = listState
+                ) {
+                    items(mediaDto) { mediaDto ->
+                        DrawerItem(
+                            modifier = Modifier,
+                            onClick = {
+                                onSourceSelected(mediaDto)
+                            },
+                            mediaDto = mediaDto
+                        )
+                    }
+                }
+
+                if (showFab) {
+                    FabComposable(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp),
+                        onFabClick = {
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(0)
+                            }
                         },
-                        mediaDto = mediaDto
+                        icon = Icons.Filled.ArrowUpward
                     )
                 }
             }
 
-            if (showFab) {
-                FabComposable(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp),
-                    onFabClick = {
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(0)
-                        }
-                    },
-                    icon = Icons.Filled.ArrowUpward
+            HorizontalDivider()
+
+            NavigationDrawerItem(
+                label = { Text("Cerrar Sesión") },
+                selected = false,
+                icon = { Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null) },
+                onClick = onSignOut,
+                modifier = Modifier.padding(16.dp),
+                colors = NavigationDrawerItemDefaults.colors(
+                    unselectedContainerColor = Color.Transparent,
+                    unselectedIconColor = MaterialTheme.colorScheme.error,
+                    unselectedTextColor = MaterialTheme.colorScheme.error
                 )
-            }
+            )
         }
     }
 }
@@ -166,6 +192,7 @@ fun DrawerPreview() {
             onSourceSelected = {},
             text = R.string.drawer_composable,
             mediaDto = mediaDto,
+            onSignOut = {}
         )
     }
 }

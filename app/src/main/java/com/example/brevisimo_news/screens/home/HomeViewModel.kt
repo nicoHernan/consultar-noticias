@@ -1,11 +1,15 @@
 package com.example.brevisimo_news.screens.home
 
+import android.content.Context
 import android.util.Log
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.brevisimo_news.data.repository.AIRepository
 import com.example.brevisimo_news.data.repository.AuthRepository
 import com.example.brevisimo_news.data.repository.HomeRepository
+import com.example.brevisimo_news.data.repository.Resource
 import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.MediaDto
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,12 +43,26 @@ class HomeViewModel @Inject constructor(
         loadMediaSourcesForDrawer()
     }
 
+    fun signOut(context: Context) {
+        viewModelScope.launch {
+            authRepository.signOut().collect { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        val credentialManager = CredentialManager.create(context)
+                        credentialManager.clearCredentialState(ClearCredentialStateRequest())
 
-    fun checkUserStatus() {
-        val isAnonymous = authRepository.isUserAnonymous()
-        _homeUiState.update { currentState ->
-            currentState.copy(isGuestUser = isAnonymous) }
+                        _sideEffects.send(HomeSideEffect.NavigateToLogin)
+                    }
+                    is Resource.Error -> {
+                        /* ... */
+                    }
+                    is Resource.Loading -> { /* ... */ }
+                }
+            }
+        }
     }
+
+
      fun getEntity(articleContent: String) {
         viewModelScope.launch {
             _homeUiState.update { currentState ->

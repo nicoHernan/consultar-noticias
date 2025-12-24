@@ -27,6 +27,33 @@ class LoginViewModel @Inject constructor(
     private val _loginUiState = MutableStateFlow(LoginUiState())
     val loginUiState = _loginUiState.asStateFlow()
 
+
+    fun signInAnonymously() {
+        viewModelScope.launch {
+            _loginUiState.update { it.copy(isLoading = true, isError = null) }
+
+
+            authRepository.signInAnonymously().collect { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        _loginUiState.update { it.copy(
+                            isLoading = false,
+                            isSuccess = true
+                        ) }
+                    }
+                    is Resource.Error -> {
+                        _loginUiState.update { it.copy(
+                            isLoading = false,
+                            isError = resource.message
+                        ) }
+                    }
+                    is Resource.Loading -> {
+                        _loginUiState.update { it.copy(isLoading = true) }
+                    }
+                }
+            }
+        }
+    }
     fun signInWithGoogle(context: Context) {
         viewModelScope.launch {
             _loginUiState.update { currenState->

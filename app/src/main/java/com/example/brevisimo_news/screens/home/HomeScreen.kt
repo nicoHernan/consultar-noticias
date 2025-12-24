@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.brevisimo_news.HOME_SCREEN
+import com.example.brevisimo_news.LOGIN_SCREEN
 import com.example.brevisimo_news.NewsAppState
 import com.example.brevisimo_news.PROFILE_SCREEN
 import com.example.brevisimo_news.R
@@ -67,18 +68,6 @@ fun HomeScreen(
     val filteredArticles by homeViewModel.filteredArticles.collectAsStateWithLifecycle()
 
 
-
-    LaunchedEffect(Unit) {
-        homeViewModel.sideEffects.collect { effect ->
-            when (effect) {
-                is HomeSideEffect.OpenExternalUrl -> {
-
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
-                    context.startActivity(intent)
-                }
-            }
-        }
-    }
 
 
     HomePortraitLayout(

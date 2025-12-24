@@ -34,6 +34,7 @@ import com.example.brevisimo_news.screens.home.HomeViewModel
 import com.example.brevisimo_news.screens.login.LoginScreen
 import com.example.brevisimo_news.screens.splash.SplashScreen
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun NewsApp(
@@ -57,6 +58,9 @@ fun NewsApp(
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
                     context.startActivity(intent)
                 }
+                is HomeSideEffect.NavigateToLogin -> {
+                    appState.navigateAndPopUp(LOGIN_SCREEN, HOME_SCREEN)
+                }
             }
         }
     }
@@ -69,7 +73,13 @@ fun NewsApp(
                     homeViewModel.onDrawerMediaClick(mediaDto = mediaDto )
                 },
                 text = R.string.drawer_composable,
-                mediaDto = uiState.newsByDomain
+                mediaDto = uiState.newsByDomain,
+                onSignOut = {
+                    coroutineScope.launch {
+                        appState.drawerState.close()
+                        homeViewModel.signOut(context)
+                    }
+                }
             )
         },
 
@@ -125,7 +135,9 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
             onSignInGuest = {
                 newsAppState.navigateAndPopUp(HOME_SCREEN, LOGIN_SCREEN)
             },
-            onSignInGoogle = {}
+            onSignInGoogle = {
+                newsAppState.navigateAndPopUp(HOME_SCREEN, LOGIN_SCREEN)
+            }
         )
     }
 

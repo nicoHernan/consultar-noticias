@@ -49,6 +49,8 @@ android {
 }
 
 dependencies {
+    //DATASTORE
+    implementation(libs.androidx.datastore.preferences)
     //GOOGLE
     implementation(libs.androidx.credentials.credentials3)
     implementation(libs.androidx.credentials.credentials.play.services.auth)

@@ -6,6 +6,7 @@ import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.brevisimo_news.data.local.LayoutPreferences
 import com.example.brevisimo_news.data.repository.AIRepository
 import com.example.brevisimo_news.data.repository.AuthRepository
 import com.example.brevisimo_news.data.repository.HomeRepository
@@ -29,7 +30,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val aiRepository: AIRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val layoutPreferences: LayoutPreferences
     ) : ViewModel() {
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
@@ -38,10 +40,30 @@ class HomeViewModel @Inject constructor(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
+        checkUserStatus()
+        observeLayoutPreference()
         loadListOfCategory()
         loadNewsInUs()
         loadMediaSourcesForDrawer()
     }
+
+    private fun checkUserStatus() {
+        val isAnonymous = authRepository.isUserAnonymous()
+
+        _homeUiState.update { currentState ->
+            currentState.copy(isGuestUser = isAnonymous)
+        }
+    }
+    private fun observeLayoutPreference() {
+        viewModelScope.launch {
+            layoutPreferences.isGridLayout.collect { isGrid ->
+                _homeUiState.update { currentState ->
+                    currentState.copy(isGridLayout = isGrid)
+                }
+            }
+        }
+    }
+
 
     fun signOut(context: Context) {
         viewModelScope.launch {

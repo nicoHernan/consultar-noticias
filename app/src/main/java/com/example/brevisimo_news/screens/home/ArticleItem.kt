@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.brevisimo_news.R
+import com.example.brevisimo_news.common.GridCardComposable
 import com.example.brevisimo_news.common.HorizontalCardComposable
 import com.example.brevisimo_news.common.VerticalCardComposable
 import com.example.brevisimo_news.domain.model.ArticleDto
@@ -13,6 +14,22 @@ import com.example.brevisimo_news.domain.model.MediaDto
 import com.example.brevisimo_news.domain.model.SourceDto
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
+@Composable
+fun GridArticleItem(
+    modifier: Modifier = Modifier,
+    articleDto: ArticleDto,
+    onClick: () -> Unit,
+    onGetEntity: (articleContent: String) -> Unit,
+    @DrawableRes previewImage: Int?
+) {
+    GridCardComposable(
+        modifier = modifier,
+        articleDto = articleDto,
+        onClick = onClick,
+        onGetEntity = onGetEntity,
+        previewImage = previewImage
+    )
+}
 @Composable
 fun VerticalArticleItem (
     modifier: Modifier = Modifier,

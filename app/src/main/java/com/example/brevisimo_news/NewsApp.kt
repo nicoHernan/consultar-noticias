@@ -26,7 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.brevisimo_news.common.DrawerComposable
-import com.example.brevisimo_news.screens.ProfileScreen
+import com.example.brevisimo_news.screens.profile.ProfileScreen
 import com.example.brevisimo_news.screens.category.CategoryScreen
 import com.example.brevisimo_news.screens.home.HomeScreen
 import com.example.brevisimo_news.screens.home.HomeSideEffect

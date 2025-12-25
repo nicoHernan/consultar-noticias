@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,12 +15,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,6 +43,79 @@ import com.example.brevisimo_news.domain.model.SourceDto
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
 
+@Composable
+fun GridCardComposable(
+    modifier: Modifier = Modifier,
+    articleDto: ArticleDto,
+    onClick: () -> Unit,
+    onGetEntity: (articleContent: String) -> Unit,
+    @DrawableRes previewImage: Int? = null
+) {
+    OutlinedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column {
+            AsyncImage(
+                model = if (LocalInspectionMode.current) {
+                    previewImage
+                } else{
+                    articleDto?.urlToImage
+                },
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.imagen_para_renderizar)
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = articleDto.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = articleDto.source?.name ?: "Fuente desconocida",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedButton(
+                    onClick = { onGetEntity(articleDto.content ?: "") },
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Icon(
+                        Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text("Analizar", style = MaterialTheme.typography.labelSmall)
+                }
+            }
+        }
+    }
+}
 @Composable
 fun CategoryCardComposable(
     modifier: Modifier = Modifier,
@@ -279,6 +356,39 @@ fun HorizontalCardComposable(
     }
 }
 
+
+
+@Preview(
+    showBackground = true,
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "GridDarkPreview"
+)
+@Preview
+@Composable
+fun GridPreview() {
+    Brevisimo_NewsTheme {
+        val articleDto = ArticleDto(
+            source = SourceDto(
+                id = "",
+                name = "Bbc News"
+            ),
+            author = "Josephine Walker",
+            title = "These are the agencies Trump is purging during the shutdown - Axios",
+            description = "Thousands are being let go from agencies overseeing health care, the environment and education.",
+            url = "https://www.axios.com/2025/10/10/trump-federal-layoffs-treasury-education-health",
+            urlToImage = "https://images.axios.com/aQmahivTarO_bl7hCJ7B1Pe5BNQ=/0x73:8076x4616/1366x768/2025/10/10/1760128847374.jpg",
+            publishedAt = "2025-10-11T15:44:45Z",
+            content = "What they're saying: A spokesperson for the largest federal employee union, the American Federation of Government Employees, told Axios that the Trump administration is \\\"illegally\\\" firing thousands o… [+4094 chars]"
+        )
+        GridCardComposable(
+            modifier = Modifier,
+            articleDto = articleDto,
+            onClick = {},
+            onGetEntity = {},
+            previewImage = R.drawable.imagen_para_renderizar
+        )
+    }
+}
 
 @Preview(
     showBackground = true,

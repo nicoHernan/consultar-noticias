@@ -2,12 +2,15 @@ package com.example.brevisimo_news.common
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,10 +26,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import com.example.brevisimo_news.R
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -110,7 +114,7 @@ fun GridCardComposable(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(Modifier.width(4.dp))
-                    Text("Analizar", style = MaterialTheme.typography.labelSmall)
+                    Text("Analizar con IA", style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
@@ -215,12 +219,16 @@ fun VerticalCardComposable (
     onGetEntity: (articleContent: String) -> Unit
 ) {
 
-    Card(
+    OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 16.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column() {
             AsyncImage(
@@ -236,59 +244,66 @@ fun VerticalCardComposable (
                     .height(200.dp),
                 contentScale = ContentScale.Crop
             )
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = articleDto?.source?.name?.uppercase() ?: "UNKNOWN SOURCE",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = articleDto?.publishedAt?.take(10) ?: "", // Solo la fecha YYYY-MM-DD
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                modifier = Modifier
-                    .padding(16.dp),
-                text = articleDto?.title ?: "Titulo no disponible",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                maxLines = 3
-            )
+                Text(
+                    text = articleDto?.title ?: "Título no disponible",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
                 val articleContent = articleDto?.content
                 val isContentAvailable = !articleContent.isNullOrBlank()
 
-                IconButton(
-                    onClick = {
-                        if (isContentAvailable) {
-                            onGetEntity(articleContent!!)
-                        }else{
-                            //TODO, CREAR UN SNACKBAR
-                        }
-                    },
-                    enabled = isContentAvailable
+                OutlinedButton(
+                    onClick = { if (isContentAvailable) onGetEntity(articleContent!!) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = isContentAvailable,
+                    shape = RoundedCornerShape(8.dp),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = if (isContentAvailable) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.outline
+                    ),
+                    contentPadding = PaddingValues(vertical = 12.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = "Obtener contexto de IA",
-                        tint =
-                            if (isContentAvailable) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = if (isContentAvailable) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = "Analizar con IA",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = if (isContentAvailable) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                     )
                 }
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = articleDto?.source?.name ?:"unkown source",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = articleDto?.publishedAt ?: "",
-                    style = MaterialTheme.typography.bodySmall
-                )
             }
         }
     }
@@ -299,17 +314,26 @@ fun HorizontalCardComposable(
     modifier: Modifier = Modifier,
     articleDto: ArticleDto,
     @DrawableRes previewImage: Int? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onGetEntity: (articleContent: String) -> Unit
 ) {
-    Card(
+    val isContentAvailable = !articleDto.content.isNullOrBlank()
+
+    OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 16.dp)
+            .padding(vertical = 4.dp, horizontal = 16.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Row(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .padding(12.dp)
+                .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -321,35 +345,71 @@ fun HorizontalCardComposable(
                 placeholder = if (previewImage != null) painterResource(id = previewImage) else null,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(100.dp)
-                    .weight(0.4f),
+                    .size(110.dp)
+                    .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = articleDto.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 3
-                )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = articleDto.source?.name?.uppercase() ?: "UNKNOWN",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
 
-                Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = articleDto.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = articleDto.source?.name ?: "unkown source",
-                        style = MaterialTheme.typography.bodySmall
+                        text = articleDto.publishedAt.take(10),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Text(
-                        text = articleDto.publishedAt,
-                        style = MaterialTheme.typography.bodySmall
-                    )
+
+                    Surface(
+                        onClick = { if (isContentAvailable) onGetEntity(articleDto.content!!) },
+                        enabled = isContentAvailable,
+                        shape = RoundedCornerShape(20.dp),
+                        color = if (isContentAvailable)
+                            MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        contentColor = if (isContentAvailable)
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text("Analizar con IA", style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
                 }
             }
         }
@@ -416,7 +476,8 @@ fun HorizontalPreview() {
             modifier = Modifier,
             articleDto = articleDto,
             previewImage = R.drawable.imagen_para_renderizar ,
-            onClick = {}
+            onClick = {},
+            onGetEntity = {}
         )
     }
 }

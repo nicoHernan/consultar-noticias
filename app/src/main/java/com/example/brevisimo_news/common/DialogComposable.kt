@@ -23,12 +23,18 @@ fun AIDialog(
     AlertDialog(
         onDismissRequest = onDismissDialog,
         title = {
-            if (homeUiState.isAiLoading) {
-                Text(text = "Obteniendo Contexto...")
-            } else if (homeUiState.isError != null) {
-                Text(text = "Error")
-            } else {
-                Text(text = "Contexto: ${homeUiState.entityName}")
+            when {
+                homeUiState.isAiLoading -> {
+                    Text(text = "Obteniendo Contexto...")
+                }
+
+                homeUiState.entityDescription.isNotEmpty() -> {
+                    Text(text = "Contexto: ${homeUiState.entityName}")
+                }
+
+                homeUiState.isError -> {
+                    Text(text = "Atención")
+                }
             }
         },
         text = {

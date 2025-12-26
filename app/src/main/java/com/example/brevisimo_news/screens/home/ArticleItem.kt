@@ -83,13 +83,15 @@ fun HorizontalArticleItem (
     modifier: Modifier = Modifier,
     articleDto: ArticleDto,
     @DrawableRes previewImage: Int? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onGetEntity: (articleContent: String) -> Unit
 ){
     HorizontalCardComposable(
         modifier = modifier,
         articleDto = articleDto,
         previewImage = previewImage,
-        onClick = onClick
+        onClick = onClick,
+        onGetEntity = onGetEntity
     )
 }
 
@@ -119,7 +121,8 @@ fun HorizontalArticlePreview() {
             modifier = Modifier,
             articleDto = articleDto,
             previewImage = R.drawable.imagen_para_renderizar,
-            onClick = {}
+            onClick = {},
+            onGetEntity = {}
         )
     }
 }

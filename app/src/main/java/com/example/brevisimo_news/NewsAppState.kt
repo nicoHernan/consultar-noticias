@@ -4,7 +4,11 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.brevisimo_news.screens.home.NavigationDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -26,13 +30,7 @@ class NewsAppState (
         }
     }
 
-    /*fun navigateToProfile(isGuest: Boolean) {
-        if (isGuest) {
-            showSnackbar("Debe loguearse con una cuenta de Google para acceder al perfil")
-        } else {
-            navHostController.navigate(PROFILE_SCREEN)
-        }
-    }*/
+
     fun navigateBack() {
         navHostController.popBackStack()
     }
@@ -70,6 +68,32 @@ class NewsAppState (
     fun navigateToCategory(categoryName: String) {
         navHostController.navigate(route = "$CATEGORY_SCREEN/$categoryName") {
             launchSingleTop = true
+        }
+    }
+
+    fun navigateToDestination(destination: NavigationDestination) {
+        val route = when (destination) {
+            NavigationDestination.HOME -> HOME_SCREEN
+            NavigationDestination.PROFILE -> PROFILE_SCREEN
+        }
+
+        navHostController.navigate(route) {
+            popUpTo(navHostController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    @Composable
+    fun getCurrentDestination(): NavigationDestination {
+        val route = navHostController.currentBackStackEntryAsState().value?.destination?.route
+
+        return when (route) {
+            HOME_SCREEN -> NavigationDestination.HOME
+            PROFILE_SCREEN -> NavigationDestination.PROFILE
+            else -> NavigationDestination.HOME
         }
     }
 }

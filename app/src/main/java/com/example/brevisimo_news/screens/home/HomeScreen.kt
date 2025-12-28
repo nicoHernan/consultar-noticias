@@ -1,13 +1,12 @@
 package com.example.brevisimo_news.screens.home
 
 
-import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
@@ -33,12 +33,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -53,11 +55,16 @@ import com.example.brevisimo_news.PROFILE_SCREEN
 import com.example.brevisimo_news.R
 import com.example.brevisimo_news.common.AIDialog
 import com.example.brevisimo_news.common.BottomNavigationBarComposable
+import com.example.brevisimo_news.common.NavigationRailComposable
 import com.example.brevisimo_news.common.SearchComposable
 import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.SourceDto
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
+enum class NavigationDestination {
+    HOME,
+    PROFILE
+}
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -65,37 +72,64 @@ fun HomeScreen(
     windowSizeClass: WindowSizeClass,
     newsAppState: NewsAppState
 ) {
-
     val context = LocalContext.current
     val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
     val filteredArticles by homeViewModel.filteredArticles.collectAsStateWithLifecycle()
 
+    when(windowSizeClass.widthSizeClass){
+        WindowWidthSizeClass.Compact ->{
+            HomePortraitLayout(
+                modifier = modifier,
+                categories = homeUiState.categories,
+                homeUiState = homeUiState,
+                onSearch = homeViewModel::onSearch,
+                articleDto = filteredArticles,
+                openDrawer = newsAppState::openDrawer,
+                onCategorySelected = newsAppState::navigateToCategory,
+                onArticleDto = homeViewModel::onArticleDto,
+                onGetEntity = homeViewModel::getEntity,
+                onDismissDialog = homeViewModel::resetAi,
+                onHomeIcon = {
+                    newsAppState.navigateToDestination(NavigationDestination.HOME)
+                },
+                onProfileIcon = {
+                    if (homeUiState.isGuestUser) {
+                        newsAppState.showSnackbar("Debes iniciar sesión con Google")
+                    } else {
+                        newsAppState.navigateToDestination(NavigationDestination.PROFILE)
+                    }
+                },
+                snackbarHostState = newsAppState.snackbarHostState
+            )
+        }
 
-
-
-    HomePortraitLayout(
-        modifier = modifier,
-        categories = homeUiState.categories,
-        homeUiState = homeUiState,
-        onSearch = homeViewModel::onSearch,
-        articleDto = filteredArticles,
-        openDrawer = newsAppState::openDrawer,
-        onCategorySelected = newsAppState::navigateToCategory,
-        onArticleDto = homeViewModel::onArticleDto,
-        onGetEntity = homeViewModel::getEntity,
-        onDismissDialog = homeViewModel::resetAi,
-        onHomeIcon = {
-            newsAppState.navigate(HOME_SCREEN)
-        },
-        onProfileIcon = {
-            if (homeUiState.isGuestUser) {
-                newsAppState.showSnackbar("Debes iniciar sesión con Google")
-            } else {
-                newsAppState.navigate(PROFILE_SCREEN)
-            }
-        },
-        snackbarHostState = newsAppState.snackbarHostState
-    )
+        WindowWidthSizeClass.Expanded, WindowWidthSizeClass.Medium -> {
+            HomeLandscapeLayout(
+                modifier = Modifier,
+                categories = homeUiState.categories,
+                homeUiState = homeUiState,
+                onSearch = homeViewModel::onSearch,
+                articleDto = filteredArticles,
+                openDrawer = newsAppState::openDrawer,
+                onCategorySelected = newsAppState::navigateToCategory,
+                onArticleDto = homeViewModel::onArticleDto,
+                onGetEntity = homeViewModel::getEntity,
+                onDismissDialog = homeViewModel::resetAi,
+                snackbarHostState = newsAppState.snackbarHostState,
+                onHomeClick = {
+                    newsAppState.navigateToDestination(NavigationDestination.HOME)
+                },
+                onProfileClick = {
+                    if (homeUiState.isGuestUser) {
+                        newsAppState.showSnackbar("Debes iniciar sesión con Google")
+                    } else {
+                        newsAppState.navigateToDestination(NavigationDestination.PROFILE)
+                    }
+                },
+                selectedDestination = newsAppState.getCurrentDestination()
+            )
+        }
+    }
 }
 
 
@@ -165,7 +199,9 @@ fun HomeContent (
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxWidth().weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ){
                     items(articleDto) { articleDto ->
                         GridArticleItem(
@@ -280,6 +316,60 @@ fun HomePortraitLayout (
     }
 }
 
+@Composable
+fun HomeLandscapeLayout(
+    modifier: Modifier = Modifier,
+    categories: List<String>,
+    articleDto: List<ArticleDto>,
+    homeUiState: HomeUiState,
+    onSearch: (String) -> Unit,
+    openDrawer: () -> Unit,
+    onCategorySelected: (String) -> Unit,
+    onArticleDto: (articleDto: ArticleDto) -> Unit,
+    onGetEntity: (articleContent: String) -> Unit,
+    onDismissDialog: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    onHomeClick: () -> Unit,
+    onProfileClick: () -> Unit,
+    selectedDestination: NavigationDestination
+) {
+    Row(modifier = modifier.fillMaxSize()) {
+        NavigationRailComposable(
+            modifier = Modifier,
+            onHomeClick = onHomeClick,
+            onProfileClick = onProfileClick,
+            selectedDestination = selectedDestination,
+            textHome = R.string.home_navigation_bar,
+            textProfile = R.string.profile_navigation_bar,
+            onDrawerClick = openDrawer,
+            iconHome = Icons.Default.Home,
+            iconProfile = Icons.Default.AccountCircle,
+            iconMenu = Icons.Default.Menu
+        )
+
+        Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+
+        ) { paddingValues ->
+            Box(modifier = Modifier.padding(paddingValues)) {
+                HomeContent(
+                    modifier = Modifier.fillMaxSize(),
+                    categories = categories,
+                    homeUiState = homeUiState,
+                    onSearch = onSearch,
+                    articleDto = articleDto,
+                    onCategorySelected = onCategorySelected,
+                    onArticleDto = onArticleDto,
+                    onGetEntity = onGetEntity
+                )
+            }
+
+            if (homeUiState.isAiLoading || homeUiState.isError || homeUiState.entityDescription.isNotEmpty()) {
+                AIDialog(homeUiState = homeUiState, onDismissDialog = onDismissDialog)
+            }
+        }
+    }
+}
 
 @Preview(
     showBackground = true,

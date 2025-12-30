@@ -5,22 +5,35 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ViewList
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.ViewList
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,17 +42,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.example.brevisimo_news.NewsAppState
+import com.example.brevisimo_news.R
+import com.example.brevisimo_news.common.TopNavigationBarComposable
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
 @Composable
 fun ProfileScreen (
     modifier: Modifier = Modifier,
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    newsAppState: NewsAppState
 ){
     val profileUiState by profileViewModel.profileUiState.collectAsStateWithLifecycle()
 
@@ -57,7 +75,8 @@ fun ProfileScreen (
         },
         onLayoutChange = { isGrid ->
             profileViewModel.setLayout(isGrid)
-        }
+        },
+        navigateBack = newsAppState::navigateBack
     )
 }
 
@@ -67,49 +86,103 @@ fun ProfileContent(
     modifier: Modifier = Modifier,
     profileUiState: ProfileUiState,
     onPickImage: () -> Unit,
-    onLayoutChange: (Boolean) -> Unit
+    onLayoutChange: (Boolean) -> Unit,
+    navigateBack: () -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        AsyncImage(
-            model = profileUiState.tempLocalUri ?: profileUiState.photoUrl,
-            contentDescription = "Foto de perfil",
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopNavigationBarComposable(
+                titleText = R.string.top_navigation_bar,
+                onNavigationIconClick = navigateBack,
+                navigationIconVector = Icons.AutoMirrored.Filled.ArrowBack
+            )
+        }
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .clickable { onPickImage() },
-            contentScale = ContentScale.Crop
-        )
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(32.dp))
 
-        Spacer(Modifier.height(16.dp))
-        Text(text = profileUiState.name, style = MaterialTheme.typography.titleLarge)
-        Text(text = profileUiState.email, style = MaterialTheme.typography.bodyMedium)
-
-        HorizontalDivider(modifier = Modifier.padding(vertical = 24.dp))
-
-        ListItem(
-            headlineContent = { Text("Diseño de noticias") },
-            supportingContent = {
-                Text(if (profileUiState.isGridLayout) "Vista Cuadrícula" else "Vista Lista")
-            },
-            leadingContent = {
-                Icon(
-                    if (profileUiState.isGridLayout) Icons.Default.GridView else Icons.Default.ViewList,
-                    contentDescription = null
+            Box(contentAlignment = Alignment.BottomEnd) {
+                AsyncImage(
+                    model = profileUiState.tempLocalUri ?: profileUiState.photoUrl,
+                    contentDescription = "Foto de perfil",
+                    modifier = Modifier
+                        .size(140.dp)
+                        .clip(CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .clickable { onPickImage() },
+                    contentScale = ContentScale.Crop
                 )
-            },
-            trailingContent = {
-                Switch(
-                    checked = profileUiState.isGridLayout,
-                    onCheckedChange = { onLayoutChange(it) }
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp),
+                    shadowElevation = 4.dp
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = null,
+                        modifier = Modifier.padding(8.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            Text(
+                text = profileUiState.name,
+                style = MaterialTheme.typography.headlineMedium, // Más prominente
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = profileUiState.email,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(Modifier.height(40.dp))
+
+            Text(
+                text = "Preferencias de visualización",
+                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            OutlinedCard(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                ListItem(
+                    headlineContent = { Text("Diseño de noticias", fontWeight = FontWeight.Medium) },
+                    supportingContent = {
+                        Text(if (profileUiState.isGridLayout) "Cuadrícula activa" else "Lista clásica")
+                    },
+                    leadingContent = {
+                        Icon(
+                            imageVector = if (profileUiState.isGridLayout) Icons.Default.GridView else Icons.Default.ViewList,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = profileUiState.isGridLayout,
+                            onCheckedChange = { onLayoutChange(it) }
+                        )
+                    }
                 )
             }
-        )
+        }
     }
 }
 
@@ -136,7 +209,8 @@ fun ProfilePreview() {
             modifier = Modifier,
             profileUiState = profileUiState,
             onPickImage = {},
-            onLayoutChange = {}
+            onLayoutChange = {},
+            navigateBack = {}
         )
     }
 }

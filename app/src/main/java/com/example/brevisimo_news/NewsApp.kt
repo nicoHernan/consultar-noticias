@@ -152,6 +152,9 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
 
     composable(PROFILE_SCREEN) {
         ProfileScreen(
+            modifier = Modifier,
+            profileViewModel = hiltViewModel(),
+            newsAppState = newsAppState
         )
     }
 

@@ -99,7 +99,8 @@ fun HomeScreen(
                         newsAppState.navigateToDestination(NavigationDestination.PROFILE)
                     }
                 },
-                snackbarHostState = newsAppState.snackbarHostState
+                snackbarHostState = newsAppState.snackbarHostState,
+                selectedDestination = newsAppState.getCurrentDestination()
             )
         }
 
@@ -252,7 +253,8 @@ fun HomePortraitLayout (
     onDismissDialog: () -> Unit,
     onHomeIcon: () -> Unit,
     onProfileIcon: () -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    selectedDestination: NavigationDestination
 ){
     Brevisimo_NewsTheme{
         Scaffold(
@@ -309,7 +311,8 @@ fun HomePortraitLayout (
                     iconHome = Icons.Filled.Home,
                     iconProfile = Icons.Filled.Person,
                     onHomeNavigationIcon = onHomeIcon,
-                    onProfileNavigationIcon = onProfileIcon
+                    onProfileNavigationIcon = onProfileIcon,
+                    selectedDestination = selectedDestination
                 )
             }
         )
@@ -412,7 +415,8 @@ fun PortraitPreview() {
             onDismissDialog = {},
             onHomeIcon = {},
             onProfileIcon = {},
-            snackbarHostState = snackbarHostState
+            snackbarHostState = snackbarHostState,
+            selectedDestination = NavigationDestination.HOME
         )
     }
 }

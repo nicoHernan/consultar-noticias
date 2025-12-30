@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.brevisimo_news.R
+import com.example.brevisimo_news.screens.home.NavigationDestination
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
 
@@ -73,6 +74,7 @@ fun BottomNavigationBarComposable(
     iconProfile: ImageVector,
     onHomeNavigationIcon: () -> Unit,
     onProfileNavigationIcon: () -> Unit,
+    selectedDestination: NavigationDestination
 ) {
     NavigationBar(
         modifier = modifier
@@ -87,7 +89,7 @@ fun BottomNavigationBarComposable(
             label = {
                 Text(text = stringResource(textHome))
             },
-            selected = false,
+            selected = selectedDestination == NavigationDestination.HOME,
             onClick = onHomeNavigationIcon
         )
 
@@ -101,7 +103,7 @@ fun BottomNavigationBarComposable(
             label = {
                 Text(text = stringResource(textProfile))
             },
-            selected = false,
+            selected = selectedDestination == NavigationDestination.PROFILE,
             onClick = onProfileNavigationIcon
         )
     }
@@ -142,7 +144,8 @@ fun BottomNavigationPreview(){
             iconHome = Icons.Filled.Home,
             iconProfile = Icons.Filled.Person,
             onHomeNavigationIcon = {},
-            onProfileNavigationIcon = {}
+            onProfileNavigationIcon = {},
+            selectedDestination = NavigationDestination.HOME
         )
     }
 }

@@ -31,6 +31,7 @@ import com.example.brevisimo_news.screens.category.CategoryScreen
 import com.example.brevisimo_news.screens.home.HomeScreen
 import com.example.brevisimo_news.screens.home.HomeSideEffect
 import com.example.brevisimo_news.screens.home.HomeViewModel
+import com.example.brevisimo_news.screens.home.NavigationDestination
 import com.example.brevisimo_news.screens.login.LoginScreen
 import com.example.brevisimo_news.screens.splash.SplashScreen
 import kotlinx.coroutines.CoroutineScope
@@ -65,8 +66,11 @@ fun NewsApp(
         }
     }
 
+    val currentDestination = appState.getCurrentDestination()
+
     ModalNavigationDrawer(
         drawerState = appState.drawerState,
+        gesturesEnabled = currentDestination == NavigationDestination.HOME,
         drawerContent = {
             DrawerComposable(
                 onSourceSelected = { mediaDto ->
@@ -82,7 +86,6 @@ fun NewsApp(
                 }
             )
         },
-
         content = {
             Scaffold() { paddingValues ->
                 NavHost(
@@ -95,7 +98,6 @@ fun NewsApp(
             }
         }
     )
-
 }
 
 

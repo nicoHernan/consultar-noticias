@@ -63,7 +63,8 @@ import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
 enum class NavigationDestination {
     HOME,
-    PROFILE
+    PROFILE,
+    LOGIN
 }
 @Composable
 fun HomeScreen(

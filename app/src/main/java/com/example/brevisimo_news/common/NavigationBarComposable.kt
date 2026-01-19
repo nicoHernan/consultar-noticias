@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.brevisimo_news.R
 import com.example.brevisimo_news.screens.home.NavigationDestination
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
@@ -35,33 +37,30 @@ fun TopNavigationBarComposable(
     onNavigationIconClick: () -> Unit,
     navigationIconVector: ImageVector
 ) {
-    NavigationBar(
-        modifier = modifier
-    ){
-        TopAppBar(
-            modifier = modifier,
-
-            title = {
-                Text(
-                    text = stringResource(titleText),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.SemiBold
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = onNavigationIconClick) {
-                    Icon(
-                        imageVector = navigationIconVector,
-                        contentDescription = "go back"
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+    CenterAlignedTopAppBar(
+        modifier = modifier,
+        title = {
+            Text(
+                text = stringResource(titleText),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
             )
+        },
+        navigationIcon = {
+            IconButton(onClick = onNavigationIconClick) {
+                Icon(
+                    imageVector = navigationIconVector,
+                    contentDescription = "go back",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
-    }
+    )
 }
 
 
@@ -77,7 +76,9 @@ fun BottomNavigationBarComposable(
     selectedDestination: NavigationDestination
 ) {
     NavigationBar(
-        modifier = modifier
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 8.dp
     ) {
         NavigationBarItem(
             icon = {
@@ -87,7 +88,11 @@ fun BottomNavigationBarComposable(
                 )
             },
             label = {
-                Text(text = stringResource(textHome))
+                Text(
+                    text = stringResource(textHome),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold
+                )
             },
             selected = selectedDestination == NavigationDestination.HOME,
             onClick = onHomeNavigationIcon
@@ -101,7 +106,11 @@ fun BottomNavigationBarComposable(
                 )
             },
             label = {
-                Text(text = stringResource(textProfile))
+                Text(
+                    text = stringResource(textProfile),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Medium
+                )
             },
             selected = selectedDestination == NavigationDestination.PROFILE,
             onClick = onProfileNavigationIcon

@@ -75,6 +75,7 @@ class NewsAppState (
         val route = when (destination) {
             NavigationDestination.HOME -> HOME_SCREEN
             NavigationDestination.PROFILE -> PROFILE_SCREEN
+            NavigationDestination.LOGIN -> LOGIN_SCREEN
         }
 
         navHostController.navigate(route) {
@@ -93,7 +94,7 @@ class NewsAppState (
         return when (route) {
             HOME_SCREEN -> NavigationDestination.HOME
             PROFILE_SCREEN -> NavigationDestination.PROFILE
-            else -> NavigationDestination.HOME
+            else -> NavigationDestination.LOGIN
         }
     }
 }

@@ -1,14 +1,21 @@
 package com.example.brevisimo_news.screens.profile
 
+import android.content.Context
 import android.net.Uri
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.brevisimo_news.data.local.LayoutPreferences
 import com.example.brevisimo_news.data.repository.AuthRepository
+import com.example.brevisimo_news.data.repository.Resource
+import com.example.brevisimo_news.screens.home.HomeSideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,11 +29,37 @@ class ProfileViewModel @Inject constructor(
     private val _profileUiState = MutableStateFlow(ProfileUiState())
     val profileUiState: StateFlow<ProfileUiState> = _profileUiState.asStateFlow()
 
+    private val _sideEffects = Channel<HomeSideEffect>(Channel.BUFFERED)
+    val sideEffects = _sideEffects.receiveAsFlow()
+
     init {
         loadUserData()
         observeLayoutPreference()
     }
 
+    fun signOut(context: Context) {
+        viewModelScope.launch {
+            authRepository.signOut().collect { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        val credentialManager = CredentialManager.create(context)
+                        credentialManager.clearCredentialState(ClearCredentialStateRequest())
+
+                        _sideEffects.send(HomeSideEffect.NavigateToLogin)
+                    }
+                    is Resource.Error -> {
+                        /* ... */
+                    }
+                    is Resource.Loading -> { /* ... */ }
+                }
+            }
+        }
+    }
+    fun onThemeChange(isDark: Boolean) {
+        _profileUiState.update { currentState ->
+            currentState.copy(isDarkMode = isDark)
+        }
+    }
 
     fun onProfileImage(uri: Uri?) {
         _profileUiState.update { currentState ->

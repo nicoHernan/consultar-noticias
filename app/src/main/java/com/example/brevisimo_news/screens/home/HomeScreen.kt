@@ -257,7 +257,6 @@ fun HomePortraitLayout (
     snackbarHostState: SnackbarHostState,
     selectedDestination: NavigationDestination
 ){
-    Brevisimo_NewsTheme{
         Scaffold(
             modifier = modifier.fillMaxSize(),
             snackbarHost = {
@@ -318,7 +317,7 @@ fun HomePortraitLayout (
             }
         )
     }
-}
+
 
 @Composable
 fun HomeLandscapeLayout(

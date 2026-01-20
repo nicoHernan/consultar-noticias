@@ -33,71 +33,87 @@ import com.example.brevisimo_news.screens.home.HomeSideEffect
 import com.example.brevisimo_news.screens.home.HomeViewModel
 import com.example.brevisimo_news.screens.home.NavigationDestination
 import com.example.brevisimo_news.screens.login.LoginScreen
+import com.example.brevisimo_news.screens.profile.ProfileViewModel
 import com.example.brevisimo_news.screens.splash.SplashScreen
+import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun NewsApp(
     windowSizeClass: WindowSizeClass,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel
 ) {
+        val context = LocalContext.current
+        val coroutineScope = rememberCoroutineScope()
+        val appState = rememberAppState(windowSizeClass = windowSizeClass, coroutineScope = coroutineScope)
 
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    val appState = rememberAppState(windowSizeClass = windowSizeClass, coroutineScope = coroutineScope)
+        val profileUiState by profileViewModel.profileUiState.collectAsStateWithLifecycle()
+        val uiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
 
-
-    val uiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        homeViewModel.sideEffects.collect { effect ->
-            when (effect) {
-                is HomeSideEffect.OpenExternalUrl -> {
-                    appState.drawerState.close()
-
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
-                    context.startActivity(intent)
-                }
-                is HomeSideEffect.NavigateToLogin -> {
-                    appState.navigateAndPopUp(LOGIN_SCREEN, HOME_SCREEN)
+    Brevisimo_NewsTheme(darkTheme = profileUiState.isDarkMode) {
+        LaunchedEffect(Unit) {
+            profileViewModel.sideEffects.collect { effect ->
+                when (effect) {
+                    is HomeSideEffect.NavigateToLogin -> {
+                        appState.navigateAndPopUp(LOGIN_SCREEN, PROFILE_SCREEN)
+                    }
+                    else -> {}
                 }
             }
         }
-    }
 
-    val currentDestination = appState.getCurrentDestination()
-
-    ModalNavigationDrawer(
-        drawerState = appState.drawerState,
-        gesturesEnabled = currentDestination == NavigationDestination.HOME,
-        drawerContent = {
-            DrawerComposable(
-                onSourceSelected = { mediaDto ->
-                    homeViewModel.onDrawerMediaClick(mediaDto = mediaDto )
-                },
-                text = R.string.drawer_composable,
-                mediaDto = uiState.newsByDomain,
-                onSignOut = {
-                    coroutineScope.launch {
+        LaunchedEffect(Unit) {
+            homeViewModel.sideEffects.collect { effect ->
+                when (effect) {
+                    is HomeSideEffect.OpenExternalUrl -> {
                         appState.drawerState.close()
-                        homeViewModel.signOut(context)
+
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
+                        context.startActivity(intent)
+                    }
+
+                    is HomeSideEffect.NavigateToLogin -> {
+                        appState.navigateAndPopUp(LOGIN_SCREEN, HOME_SCREEN)
                     }
                 }
-            )
-        },
-        content = {
-            Scaffold() { paddingValues ->
-                NavHost(
-                    modifier = Modifier.padding(paddingValues),
-                    navController = appState.navHostController,
-                    startDestination = SPLASH_SCREEN
-                ) {
-                    newsGraph(appState)
-                }
             }
         }
-    )
+
+        val currentDestination = appState.getCurrentDestination()
+
+        ModalNavigationDrawer(
+            drawerState = appState.drawerState,
+            gesturesEnabled = currentDestination == NavigationDestination.HOME,
+            drawerContent = {
+                DrawerComposable(
+                    onSourceSelected = { mediaDto ->
+                        homeViewModel.onDrawerMediaClick(mediaDto = mediaDto)
+                    },
+                    text = R.string.drawer_composable,
+                    mediaDto = uiState.newsByDomain,
+                    onSignOut = {
+                        coroutineScope.launch {
+                            appState.drawerState.close()
+                            homeViewModel.signOut(context)
+                        }
+                    }
+                )
+            },
+            content = {
+                Scaffold() { paddingValues ->
+                    NavHost(
+                        modifier = Modifier.padding(paddingValues),
+                        navController = appState.navHostController,
+                        startDestination = SPLASH_SCREEN
+                    ) {
+                        newsGraph(appState, profileViewModel)
+                    }
+                }
+            }
+        )
+    }
 }
 
 
@@ -108,6 +124,7 @@ fun rememberAppState(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ): NewsAppState {
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     return remember(navHostController, windowSizeClass, coroutineScope, snackbarHostState) {
@@ -121,7 +138,8 @@ fun rememberAppState(
     }
 }
 
-fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
+
+fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState, profileViewModel: ProfileViewModel) {
     composable(SPLASH_SCREEN) {
         SplashScreen(
             openAndPopUp = { route, popUp ->
@@ -155,7 +173,7 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState) {
     composable(PROFILE_SCREEN) {
         ProfileScreen(
             modifier = Modifier,
-            profileViewModel = hiltViewModel(),
+            profileViewModel = profileViewModel,
             newsAppState = newsAppState
         )
     }

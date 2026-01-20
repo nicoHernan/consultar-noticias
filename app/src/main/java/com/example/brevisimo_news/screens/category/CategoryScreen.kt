@@ -132,7 +132,6 @@ fun CategoryContent (
         onSourceSelected: (MediaDto) -> Unit,
         navigateBack: () -> Unit
     ){
-        Brevisimo_NewsTheme {
             Scaffold (
                 modifier = modifier.fillMaxSize(),
                 topBar = {
@@ -159,7 +158,7 @@ fun CategoryContent (
                 bottomBar = {}
             )
         }
-    }
+
 
 
 @Preview(

@@ -5,6 +5,9 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -20,7 +23,6 @@ class NewsAppState (
     private val coroutineScope: CoroutineScope,
     val snackbarHostState: SnackbarHostState
 ){
-
     fun showSnackbar(message: String){
         coroutineScope.launch {
             snackbarHostState.showSnackbar(

@@ -9,5 +9,6 @@ data class ProfileUiState(
     val photoUrl: String? = null,
     val isGridLayout: Boolean = false,
     val tempLocalUri: Uri? = null,
-    val error: String? = null
+    val error: String? = null,
+    val isDarkMode: Boolean = false
 )

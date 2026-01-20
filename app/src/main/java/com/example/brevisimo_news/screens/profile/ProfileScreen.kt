@@ -15,19 +15,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ViewList
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.ViewList
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,6 +64,7 @@ fun ProfileScreen (
     newsAppState: NewsAppState
 ){
     val profileUiState by profileViewModel.profileUiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     val pickMedia = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -76,7 +81,11 @@ fun ProfileScreen (
         onLayoutChange = { isGrid ->
             profileViewModel.setLayout(isGrid)
         },
-        navigateBack = newsAppState::navigateBack
+        navigateBack = newsAppState::navigateBack,
+        onThemeChange = {isDarkMode ->
+            profileViewModel.onThemeChange(isDarkMode)
+        },
+        onSignOut = {profileViewModel.signOut(context = context)}
     )
 }
 
@@ -87,7 +96,9 @@ fun ProfileContent(
     profileUiState: ProfileUiState,
     onPickImage: () -> Unit,
     onLayoutChange: (Boolean) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    onThemeChange: (Boolean) -> Unit,
+    onSignOut: () -> Unit
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -153,7 +164,9 @@ fun ProfileContent(
 
             Text(
                 text = "Preferencias de visualización",
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -179,8 +192,52 @@ fun ProfileContent(
                             checked = profileUiState.isGridLayout,
                             onCheckedChange = { onLayoutChange(it) }
                         )
+
                     }
                 )
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            OutlinedCard(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                ListItem(
+                    headlineContent = { Text("Tema de la aplicación", fontWeight = FontWeight.Medium) },
+                    supportingContent = {
+                        Text(if (profileUiState.isDarkMode) "Modo oscuro" else "Modo claro")
+                    },
+                    leadingContent = {
+                        Icon(
+                            imageVector = if (profileUiState.isDarkMode) Icons.Default.DarkMode else Icons.Default.LightMode,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                    trailingContent = {
+                        Switch(
+                            checked = profileUiState.isDarkMode,
+                            onCheckedChange = { onThemeChange(it) }
+                        )
+                    }
+                )
+            }
+
+            Spacer(Modifier.height(80.dp))
+
+            Button(
+                onClick = onSignOut,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(Icons.Default.Logout, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text("Cerrar Sesión")
             }
         }
     }
@@ -210,7 +267,9 @@ fun ProfilePreview() {
             profileUiState = profileUiState,
             onPickImage = {},
             onLayoutChange = {},
-            navigateBack = {}
+            navigateBack = {},
+            onThemeChange = {},
+            onSignOut = {}
         )
     }
 }

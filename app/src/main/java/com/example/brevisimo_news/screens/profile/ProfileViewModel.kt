@@ -15,6 +15,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -34,7 +36,7 @@ class ProfileViewModel @Inject constructor(
 
     init {
         loadUserData()
-        observeLayoutPreference()
+        observePreferences()
     }
 
     fun signOut(context: Context) {
@@ -56,8 +58,8 @@ class ProfileViewModel @Inject constructor(
         }
     }
     fun onThemeChange(isDark: Boolean) {
-        _profileUiState.update { currentState ->
-            currentState.copy(isDarkMode = isDark)
+        viewModelScope.launch {
+            layoutPreferences.setDarkMode(isDark)
         }
     }
 
@@ -66,13 +68,16 @@ class ProfileViewModel @Inject constructor(
             currentState.copy(tempLocalUri = uri)
         }
     }
-    private fun observeLayoutPreference() {
+    private fun observePreferences() {
         viewModelScope.launch {
-            layoutPreferences.isGridLayout.collect { isGrid ->
-                _profileUiState.update {currentState ->
-                    currentState.copy(isGridLayout = isGrid)
+            combine(
+                layoutPreferences.isGridLayout,
+                layoutPreferences.isDarkMode
+            ) { isGrid, isDark ->
+                _profileUiState.update { currentState ->
+                    currentState.copy(isGridLayout = isGrid, isDarkMode = isDark)
                 }
-            }
+            }.collect()
         }
     }
 

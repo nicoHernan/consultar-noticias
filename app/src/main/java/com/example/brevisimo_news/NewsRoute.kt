@@ -7,3 +7,4 @@ const val CATEGORY_ARGUMENTS = "category_name"
 const val LOGIN_SCREEN = "LoginScreen"
 
 const val PROFILE_SCREEN = "ProfileScreen"
+const val BOOKMARKS_SCREEN = "BookmarksScreen"

@@ -11,7 +11,9 @@ import com.example.brevisimo_news.data.repository.AIRepository
 import com.example.brevisimo_news.data.repository.AuthRepository
 import com.example.brevisimo_news.data.repository.HomeRepository
 import com.example.brevisimo_news.data.repository.Resource
+import com.example.brevisimo_news.data.repository.SupabaseRepository
 import com.example.brevisimo_news.domain.model.ArticleDto
+import com.example.brevisimo_news.domain.model.BookmarkDto
 import com.example.brevisimo_news.domain.model.MediaDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -31,7 +33,8 @@ class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val aiRepository: AIRepository,
     private val authRepository: AuthRepository,
-    private val layoutPreferences: LayoutPreferences
+    private val layoutPreferences: LayoutPreferences,
+    private val supabaseRepository: SupabaseRepository
     ) : ViewModel() {
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
@@ -45,6 +48,30 @@ class HomeViewModel @Inject constructor(
         loadListOfCategory()
         loadNewsInUs()
         loadMediaSourcesForDrawer()
+    }
+
+    fun onSaveBookmark(article: ArticleDto) {
+        viewModelScope.launch {
+            val currentUser = authRepository.getCurrentUser()
+
+            if (currentUser != null && !currentUser.isAnonymous) {
+                val firebaseId = currentUser.uid
+
+                val bookmark = BookmarkDto(
+                    userId = firebaseId,
+                    title = article.title,
+                    url = article.url,
+                    id = null,
+                    imageUrl = article.urlToImage ?: ""
+                )
+                try {
+                    supabaseRepository.saveToBookmarks(bookmark)
+                } catch (e: Exception) {
+                }
+            } else {
+                _sideEffects.send(HomeSideEffect.NavigateToLogin)
+            }
+        }
     }
 
     private fun checkUserStatus() {
@@ -182,14 +209,11 @@ class HomeViewModel @Inject constructor(
     }
 
 
-
     private fun loadListOfCategory() {
         _homeUiState.update { currentState ->
             currentState.copy(categories = homeRepository.getLocalCategories())
         }
     }
-
-
 
     val filteredArticles: StateFlow<List<ArticleDto>> = homeUiState
             .map { uiState ->

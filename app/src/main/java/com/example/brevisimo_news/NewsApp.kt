@@ -26,6 +26,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.brevisimo_news.common.DrawerComposable
+import com.example.brevisimo_news.screens.bookmarks.BookmarksScreen
+import com.example.brevisimo_news.screens.bookmarks.BookmarksViewModel
 import com.example.brevisimo_news.screens.profile.ProfileScreen
 import com.example.brevisimo_news.screens.category.CategoryScreen
 import com.example.brevisimo_news.screens.home.HomeScreen
@@ -43,7 +45,8 @@ import kotlinx.coroutines.launch
 fun NewsApp(
     windowSizeClass: WindowSizeClass,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    bookmarksViewModel: BookmarksViewModel
 ) {
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
@@ -108,7 +111,7 @@ fun NewsApp(
                         navController = appState.navHostController,
                         startDestination = SPLASH_SCREEN
                     ) {
-                        newsGraph(appState, profileViewModel)
+                        newsGraph(appState, profileViewModel, bookmarksViewModel)
                     }
                 }
             }
@@ -139,7 +142,7 @@ fun rememberAppState(
 }
 
 
-fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState, profileViewModel: ProfileViewModel) {
+fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState, profileViewModel: ProfileViewModel, bookmarksViewModel: BookmarksViewModel) {
     composable(SPLASH_SCREEN) {
         SplashScreen(
             openAndPopUp = { route, popUp ->
@@ -193,6 +196,13 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState, profileViewModel: Prof
             windowSizeClass = newsAppState.windowSizeClass,
             categoryName = categoryName,
             newsAppState = newsAppState
+        )
+    }
+    composable(BOOKMARKS_SCREEN) {
+        BookmarksScreen(
+            modifier = Modifier,
+            newsAppState = newsAppState,
+            bookmarksViewModel = bookmarksViewModel
         )
     }
 }

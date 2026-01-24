@@ -7,6 +7,8 @@ plugins {
     id("com.google.dagger.hilt.android")
     //FIREBASE PLUGIN
     id("com.google.gms.google-services")
+    //SERIALIZACION
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -49,6 +51,10 @@ android {
 }
 
 dependencies {
+    //SUPABASE
+    implementation(platform(libs.bom))
+    implementation(libs.postgrest.kt)
+    implementation(libs.ktor.client.android)
     //DATASTORE
     implementation(libs.androidx.datastore.preferences)
     //GOOGLE

@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
@@ -72,7 +73,8 @@ import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 enum class NavigationDestination {
     HOME,
     PROFILE,
-    LOGIN
+    LOGIN,
+    BOOKMARKS
 }
 @Composable
 fun HomeScreen(
@@ -106,6 +108,13 @@ fun HomeScreen(
                         newsAppState.showSnackbar("Debes iniciar sesión con Google")
                     } else {
                         newsAppState.navigateToDestination(NavigationDestination.PROFILE)
+                    }
+                },
+                onBookmarksIcon = {
+                    if (homeUiState.isGuestUser) {
+                        newsAppState.showSnackbar("Debes iniciar sesión con Google")
+                    } else {
+                        newsAppState.navigateToDestination(NavigationDestination.BOOKMARKS)
                     }
                 },
                 snackbarHostState = newsAppState.snackbarHostState,
@@ -262,6 +271,7 @@ fun HomePortraitLayout (
     onDismissDialog: () -> Unit,
     onHomeIcon: () -> Unit,
     onProfileIcon: () -> Unit,
+    onBookmarksIcon: () -> Unit,
     snackbarHostState: SnackbarHostState,
     selectedDestination: NavigationDestination
 ) {
@@ -336,7 +346,10 @@ fun HomePortraitLayout (
                     iconProfile = Icons.Filled.Person,
                     onHomeNavigationIcon = onHomeIcon,
                     onProfileNavigationIcon = onProfileIcon,
-                    selectedDestination = selectedDestination
+                    selectedDestination = selectedDestination,
+                    textBookmarks = R.string.bookmarks_navigation_bar,
+                    iconBookmarks = Icons.Filled.BookmarkBorder,
+                    onBookmarksNavigationIcon = onBookmarksIcon
                 )
             }
         }
@@ -440,6 +453,7 @@ fun PortraitPreview() {
             onDismissDialog = {},
             onHomeIcon = {},
             onProfileIcon = {},
+            onBookmarksIcon = {},
             snackbarHostState = snackbarHostState,
             selectedDestination = NavigationDestination.HOME
         )

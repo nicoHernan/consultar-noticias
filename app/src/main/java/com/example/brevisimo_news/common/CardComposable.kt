@@ -46,11 +46,80 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.brevisimo_news.domain.model.ArticleDto
+import com.example.brevisimo_news.domain.model.BookmarksDto
 import com.example.brevisimo_news.domain.model.MediaDto
 import com.example.brevisimo_news.domain.model.SourceDto
 import com.example.brevisimo_news.ui.theme.Brevisimo_NewsTheme
 
 
+@Composable
+fun BookmarksCardComposable(
+    modifier: Modifier = Modifier,
+    bookmarks: BookmarksDto,
+    onClick: () -> Unit
+) {
+    OutlinedCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+        ) {
+            if (!bookmarks.imageUrl.isNullOrBlank()) {
+                AsyncImage(
+                    model = bookmarks.imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(120.dp)
+                        .fillMaxHeight(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .weight(1f)
+            ) {
+                Text(
+                    text = bookmarks.sourceName?.uppercase() ?: "NOTICIA",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = bookmarks.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (!bookmarks.description.isNullOrBlank()) {
+                    Text(
+                        text = bookmarks.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
+}
 @Composable
 fun GridCardComposable(
     modifier: Modifier = Modifier,

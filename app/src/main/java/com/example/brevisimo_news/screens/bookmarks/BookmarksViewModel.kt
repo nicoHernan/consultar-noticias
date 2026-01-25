@@ -19,7 +19,7 @@ class BookmarksViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ): ViewModel(){
     private val _bookmarksUiState = MutableStateFlow(BookmarksUiState())
-    val uiState: StateFlow<BookmarksUiState> = _bookmarksUiState.asStateFlow()
+    val bookmarksUiState: StateFlow<BookmarksUiState> = _bookmarksUiState.asStateFlow()
 
     init {
         loadBookmarks()
@@ -56,16 +56,16 @@ class BookmarksViewModel @Inject constructor(
     }
 
 
-    fun deleteBookmark(bookmarkId: String) {
+    fun deleteBookmark(bookmarksId: String) {
         viewModelScope.launch {
             try {
                 // Necesitarás agregar deleteBookmark a tu SupabaseRepository
-                supabaseRepository.deleteBookmark(bookmarkId)
+                supabaseRepository.deleteBookmark(bookmarksId)
                 // Actualizamos la lista localmente para que sea instantáneo
                 _bookmarksUiState.update { currentState ->
                     currentState.copy(
                         bookmarksDto = currentState.bookmarksDto.filter { bookmarksDto->
-                            bookmarksDto.id != bookmarkId
+                            bookmarksDto.bookmarksId != bookmarksId
                         })
                 }
             } catch (e: Exception) { /* Manejar error */ }

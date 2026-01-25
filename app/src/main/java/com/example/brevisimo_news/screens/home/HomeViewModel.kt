@@ -13,7 +13,7 @@ import com.example.brevisimo_news.data.repository.HomeRepository
 import com.example.brevisimo_news.data.repository.Resource
 import com.example.brevisimo_news.data.repository.SupabaseRepository
 import com.example.brevisimo_news.domain.model.ArticleDto
-import com.example.brevisimo_news.domain.model.BookmarkDto
+import com.example.brevisimo_news.domain.model.BookmarksDto
 import com.example.brevisimo_news.domain.model.MediaDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -57,11 +57,11 @@ class HomeViewModel @Inject constructor(
             if (currentUser != null && !currentUser.isAnonymous) {
                 val firebaseId = currentUser.uid
 
-                val bookmark = BookmarkDto(
+                val bookmark = BookmarksDto(
                     userId = firebaseId,
                     title = article.title,
                     url = article.url,
-                    id = null,
+                    bookmarksId = null,
                     imageUrl = article.urlToImage ?: ""
                 )
                 try {

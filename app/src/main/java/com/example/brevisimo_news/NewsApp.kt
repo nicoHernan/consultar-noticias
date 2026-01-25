@@ -45,8 +45,7 @@ import kotlinx.coroutines.launch
 fun NewsApp(
     windowSizeClass: WindowSizeClass,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    profileViewModel: ProfileViewModel,
-    bookmarksViewModel: BookmarksViewModel
+    profileViewModel: ProfileViewModel
 ) {
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
@@ -111,7 +110,7 @@ fun NewsApp(
                         navController = appState.navHostController,
                         startDestination = SPLASH_SCREEN
                     ) {
-                        newsGraph(appState, profileViewModel, bookmarksViewModel)
+                        newsGraph(appState, profileViewModel)
                     }
                 }
             }
@@ -142,7 +141,7 @@ fun rememberAppState(
 }
 
 
-fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState, profileViewModel: ProfileViewModel, bookmarksViewModel: BookmarksViewModel) {
+fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState, profileViewModel: ProfileViewModel) {
     composable(SPLASH_SCREEN) {
         SplashScreen(
             openAndPopUp = { route, popUp ->
@@ -200,9 +199,9 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState, profileViewModel: Prof
     }
     composable(BOOKMARKS_SCREEN) {
         BookmarksScreen(
-            modifier = Modifier,
             newsAppState = newsAppState,
-            bookmarksViewModel = bookmarksViewModel
+            bookmarksViewModel = hiltViewModel(),
+            bookmarksDto = emptyList()
         )
     }
 }

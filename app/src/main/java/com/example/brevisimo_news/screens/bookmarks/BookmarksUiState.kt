@@ -1,10 +1,10 @@
 package com.example.brevisimo_news.screens.bookmarks
 
-import com.example.brevisimo_news.domain.model.BookmarkDto
+import com.example.brevisimo_news.domain.model.BookmarksDto
 
 data class BookmarksUiState(
-    val bookmarksDto: List<BookmarkDto> = emptyList(),
+    val bookmarksDto: List<BookmarksDto> = emptyList(),
     val isLoading: Boolean = false,
     val isError: Boolean = false,
-    val isAppLoading: Boolean = false,
+    val isAppLoading: Boolean = false
 )

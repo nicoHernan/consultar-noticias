@@ -199,9 +199,9 @@ fun NavGraphBuilder.newsGraph(newsAppState: NewsAppState, profileViewModel: Prof
     }
     composable(BOOKMARKS_SCREEN) {
         BookmarksScreen(
+            modifier = Modifier,
             newsAppState = newsAppState,
-            bookmarksViewModel = hiltViewModel(),
-            bookmarksDto = emptyList()
+            bookmarksViewModel = hiltViewModel()
         )
     }
 }

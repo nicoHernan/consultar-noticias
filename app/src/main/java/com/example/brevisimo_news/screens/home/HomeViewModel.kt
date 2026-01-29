@@ -11,7 +11,6 @@ import com.example.brevisimo_news.data.repository.AIRepository
 import com.example.brevisimo_news.data.repository.AuthRepository
 import com.example.brevisimo_news.data.repository.HomeRepository
 import com.example.brevisimo_news.data.repository.Resource
-import com.example.brevisimo_news.data.repository.SupabaseRepository
 import com.example.brevisimo_news.domain.model.ArticleDto
 import com.example.brevisimo_news.domain.model.BookmarksDto
 import com.example.brevisimo_news.domain.model.MediaDto
@@ -34,7 +33,7 @@ class HomeViewModel @Inject constructor(
     private val aiRepository: AIRepository,
     private val authRepository: AuthRepository,
     private val layoutPreferences: LayoutPreferences,
-    private val supabaseRepository: SupabaseRepository
+    //private val supabaseRepository: SupabaseRepository
     ) : ViewModel() {
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState: StateFlow<HomeUiState> = _homeUiState.asStateFlow()
@@ -65,7 +64,7 @@ class HomeViewModel @Inject constructor(
                     imageUrl = article.urlToImage ?: ""
                 )
                 try {
-                    supabaseRepository.saveToBookmarks(bookmark)
+                    //supabaseRepository.saveToBookmarks(bookmark)
                 } catch (e: Exception) {
                 }
             } else {

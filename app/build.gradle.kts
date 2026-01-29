@@ -8,7 +8,7 @@ plugins {
     //FIREBASE PLUGIN
     id("com.google.gms.google-services")
     //SERIALIZACION
-    kotlin("plugin.serialization") version "2.1.0"
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -51,10 +51,16 @@ android {
 }
 
 dependencies {
+    implementation(libs.kotlinx.serialization.json)
     //SUPABASE
-    implementation(platform(libs.bom))
-    implementation(libs.postgrest.kt)
-    implementation(libs.ktor.client.android)
+    implementation("io.ktor:ktor-client-android:2.3.13")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.13")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.13")
+
+
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.auth)
+    implementation(libs.supabase.postgrest)
     //DATASTORE
     implementation(libs.androidx.datastore.preferences)
     //GOOGLE

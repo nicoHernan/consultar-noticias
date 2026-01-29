@@ -6,7 +6,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import javax.inject.Inject
 
-class SupabaseImpl @Inject constructor(
+/*class SupabaseImpl @Inject constructor(
     private val supabaseClient: SupabaseClient
 ) : SupabaseRepository {
     override suspend fun saveToBookmarks(bookmark: BookmarksDto) {
@@ -47,4 +47,4 @@ class SupabaseImpl @Inject constructor(
             }
         }
     }
-}
+}*/

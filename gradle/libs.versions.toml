@@ -1,6 +1,6 @@
 [versions]
 androidxCredentialsCredentials = "1.6.0-rc01"
-bom = "2.6.1"
+supabase = "2.1.3"
 coil3 = "3.2.0"
 datastorePreferences = "1.0.0"
 firebaseBom = "34.6.0"
@@ -8,7 +8,7 @@ googleid = "1.1.1"
 gson = "2.12.1"
 converter-gson = "2.9.0"
 hiltNavigationCompose = "1.2.0"
-ktorClientAndroid = "2.3.13"
+kotlinxSerializationJson = "1.6.3"
 navigationCompose = "2.8.9"
 hilt = "2.57.1"
 material3 = "1.4.0"
@@ -27,7 +27,6 @@ foundation = "1.9.3"
 
 [libraries]
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "bom" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 androidx-credentials-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidxCredentialsCredentials" }
 androidx-credentials-credentials3 = { module = "androidx.credentials:credentials", version.ref = "androidxCredentialsCredentials" }
@@ -45,8 +44,11 @@ hilt = { group = "com.google.dagger", name ="hilt-android", version.ref = "hilt"
 hilt-compiler = { group = "com.google.dagger", name= "hilt-android-compiler" , version.ref = "hilt" }
 androidx-compose-material3 = {group = "androidx.compose.material3", name = "material3", version.ref = "material3"}
 androidx-compose-material3-window-size = {group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "material3"}
-ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt"}
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabase" }
+supabase-auth = { module = "io.github.jan-tennert.supabase:gotrue-kt" }
+supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+
 retrofit2 = {group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2"}
 converter-gson = {group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "converter-gson"}
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
